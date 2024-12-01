@@ -20,12 +20,7 @@ export default function SignInButton() {
           </span>
         </button>
       </form>
-      <form
-        action={async () => {
-          'use server'
-          await signIn('github', { redirectTo: '/dashboard' })
-        }}
-      >
+      <form>
         <button
           type="submit"
           className="flex items-center justify-center gap-4 rounded-lg pl-3 mb-4"

@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import RemoveBtn from './RemoveBtn'
 import Link from 'next/link'
-import { HiPencilAlt } from 'react-icons/hi'
 import Image from 'next/image'
 
 interface Topic {
@@ -12,13 +10,20 @@ interface Topic {
   description: string
   createdAt: string
   updatedAt: string
-  image?: string // 상품 이미지를 추가할 수 있도록 필드 확장
+  image?: string
+  price: number
+  category: string
 }
 
 export default function TopicLists() {
   const [topics, setTopics] = useState<Topic[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('') // 선택된 카테고리
+  const [priceSortOrder, setPriceSortOrder] = useState<string>('asc') // 가격 정렬 순서 (asc 또는 desc)
+  const [dateSortOrder, setDateSortOrder] = useState<string>('desc') // 최신순/오래된순 정렬
+  const [searchQuery, setSearchQuery] = useState<string>('') // 검색어 상태
 
   useEffect(() => {
     async function fetchTopics() {
@@ -39,45 +44,143 @@ export default function TopicLists() {
     fetchTopics()
   }, [])
 
+  // 필터링 및 정렬
+  const filteredTopics = topics
+    .filter((topic) => {
+      // 검색어 필터
+      if (
+        searchQuery &&
+        !topic.title.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false
+      }
+
+      // 카테고리 필터
+      if (selectedCategory && topic.category !== selectedCategory) {
+        return false
+      }
+      return true
+    })
+    .sort((a, b) => {
+      // 가격 순 정렬
+      if (priceSortOrder === 'asc') {
+        return a.price - b.price
+      } else if (priceSortOrder === 'desc') {
+        return b.price - a.price
+      }
+
+      // 날짜 순 정렬
+      if (dateSortOrder === 'desc') {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      } else {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      }
+    })
+
   if (loading) return <p>Loading topics...</p>
   if (error) return <p>Error: {error}</p>
-  if (topics.length === 0) return <p>No topics found</p>
 
   return (
     <div className="container mx-auto my-8">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {topics.map((topic: Topic) => (
-          <div
-            key={topic._id}
-            className="bg-white border border-gray-300 rounded-md shadow hover:shadow-lg p-4 transition"
+      {/* 필터 및 검색 */}
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <div>
+          <label htmlFor="category" className="mr-2">
+            카테고리:
+          </label>
+          <select
+            id="category"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="border border-gray-300 rounded-md p-2"
           >
-            {/* 이미지 표시 */}
-            <div className="relative h-48 w-full mb-4">
-              <Image
-                src={topic.image || '/default-product.jpg'} // 기본 이미지 사용
-                alt={topic.title}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-md"
-              />
-            </div>
-            {/* 제목 및 설명 */}
-            <h3 className="text-lg font-bold text-gray-800 truncate">
-              {topic.title}
-            </h3>
-            <p className="text-sm text-gray-600 mt-2 truncate">
-              {topic.description}
-            </p>
-            {/* 버튼 및 수정 */}
-            <div className="flex justify-between items-center mt-4">
-              <RemoveBtn id={topic._id} />
-              <Link href={`/editTopic/${topic._id}`} className="text-blue-600">
-                <HiPencilAlt size={20} />
+            <option value="">전체</option>
+            <option value="가전제품">가전제품</option>
+            <option value="문구(완구)">문구(완구)</option>
+            <option value="장난감">장난감</option>
+            <option value="생필품">생필품</option>
+            <option value="가구">가구</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="priceSort" className="mr-2">
+            가격 순:
+          </label>
+          <select
+            id="priceSort"
+            value={priceSortOrder}
+            onChange={(e) => setPriceSortOrder(e.target.value)}
+            className="border border-gray-300 rounded-md p-2"
+          >
+            <option value="asc">가격 낮은순</option>
+            <option value="desc">가격 높은순</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="dateSort" className="mr-2">
+            날짜 순:
+          </label>
+          <select
+            id="dateSort"
+            value={dateSortOrder}
+            onChange={(e) => setDateSortOrder(e.target.value)}
+            className="border border-gray-300 rounded-md p-2"
+          >
+            <option value="desc">최신순</option>
+            <option value="asc">오래된순</option>
+          </select>
+        </div>
+
+        <div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="검색어를 입력하세요..."
+            className="border border-gray-300 rounded-md p-2 w-full sm:w-auto"
+          />
+        </div>
+      </div>
+
+      {/* 필터링된 결과 표시 */}
+      {filteredTopics.length === 0 ? (
+        <p>등록된 상품이 없습니다...</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {filteredTopics.map((topic) => (
+            <div
+              key={topic._id}
+              className="bg-white border border-gray-300 rounded-md shadow hover:shadow-lg p-4 transition"
+            >
+              <div className="relative h-48 w-full mb-4">
+                <Image
+                  src={topic.image || '/default-avatar.png'} // 기본 이미지 사용
+                  alt={topic.title}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-md"
+                />
+              </div>
+              <h3 className="text-lg font-bold text-gray-800 truncate">
+                {topic.title}
+              </h3>
+              <p className="text-sm text-gray-600 mt-2 truncate">
+                {topic.description}
+              </p>
+              <p className="text-sm text-gray-500 mt-2">{topic.category}</p>
+              <h3 className="text-lg font-bold text-gray-800 truncate mt-4">
+                {topic.price}원
+              </h3>
+              <Link href={`/detailTopic/${topic._id}`} passHref>
+                <button className="text-blue-600 mt-4">자세히 보기</button>
               </Link>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

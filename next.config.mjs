@@ -13,6 +13,10 @@ const nextConfig = {
       },
     ],
   },
+
+  experimental: {
+    serverComponentsExternalPackages: ['formidable'], // formidable 외부 패키지 사용 허용
+  },
 }
 
 export default nextConfig

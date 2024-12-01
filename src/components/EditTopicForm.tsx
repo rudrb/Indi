@@ -1,6 +1,8 @@
-'use client' // 클라이언트 컴포넌트로 지정
+// src/app/editTopic/[id]/page.tsx
 
-import React, { useState, useEffect } from 'react'
+'use client'
+
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface EditTopicFormProps {
@@ -16,13 +18,13 @@ const EditTopicForm: React.FC<EditTopicFormProps> = ({
   title,
   description,
   price,
-  imageUrl,
 }) => {
   const [newTitle, setNewTitle] = useState(title)
   const [newDescription, setNewDescription] = useState(description)
   const [newPrice, setNewPrice] = useState(price)
   const [newImage, setNewImage] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,8 +34,8 @@ const EditTopicForm: React.FC<EditTopicFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     setLoading(true)
+    setError(null) // 에러 초기화
 
     const formData = new FormData()
     formData.append('title', newTitle)
@@ -44,16 +46,18 @@ const EditTopicForm: React.FC<EditTopicFormProps> = ({
     try {
       const res = await fetch(`/api/topics/${id}`, {
         method: 'PUT',
-        body: formData, // 수정된 데이터를 FormData로 전송
+        body: formData,
       })
 
       if (res.ok) {
-        router.push('/') // 수정 완료 후 홈으로 리다이렉트
+        router.push('/') // 수정 성공 후 홈으로 리다이렉트
       } else {
-        throw new Error('상품 수정에 실패했습니다.')
+        const result = await res.json()
+        setError(result.message || '상품 수정에 실패했습니다.')
       }
     } catch (error) {
       console.error('Error submitting form:', error)
+      setError('상품 수정에 실패했습니다.')
     } finally {
       setLoading(false)
     }
@@ -82,6 +86,7 @@ const EditTopicForm: React.FC<EditTopicFormProps> = ({
         onChange={(e) => setNewPrice(e.target.value)}
       />
       <input type="file" accept="image/*" onChange={handleImageChange} />
+      {error && <p className="text-red-500">{error}</p>}
       <button
         type="submit"
         disabled={loading}

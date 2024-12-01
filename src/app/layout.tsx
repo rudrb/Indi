@@ -31,7 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextAuthProvider>
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-7xl mx-auto">
             <Navbar></Navbar>
             <div className="mt-8">{children}</div>
           </div>
