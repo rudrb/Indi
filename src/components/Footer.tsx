@@ -1,5 +1,6 @@
 // components/Footer.tsx
 import React from 'react'
+import Link from 'next/link' // Link 컴포넌트 추가
 
 const Footer: React.FC = () => {
   return (
@@ -23,36 +24,38 @@ const Footer: React.FC = () => {
                 </span>
                 <ul className="list-unstyled">
                   <li>
-                    <a
-                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
+                    <Link
                       href="/"
+                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
                     >
                       About Us
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a
-                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
+                    <Link
                       href="/"
+                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
                     >
                       Blog
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a
                       className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
                       href="https://github.com/persipica"
+                      target="_blank" // 외부 링크 처리
+                      rel="noopener noreferrer"
                     >
                       Github
                     </a>
                   </li>
                   <li>
-                    <a
-                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
+                    <Link
                       href="/addTopic"
+                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
                     >
                       addProducts
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -62,12 +65,12 @@ const Footer: React.FC = () => {
                 </span>
                 <ul className="list-unstyled">
                   <li>
-                    <a
-                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
+                    <Link
                       href="/"
+                      className="text-blueGray-600 hover:text-blueGray-800 font-semibold block pb-2 text-sm"
                     >
                       Contact Us
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>

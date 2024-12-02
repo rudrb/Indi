@@ -12,7 +12,7 @@ import {
 import { useSession } from 'next-auth/react'
 
 export default function FloatingSidebar() {
-  const { status, data: session } = useSession() // 세션 정보 가져오기
+  const { status } = useSession() // 세션 정보 가져오기
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
