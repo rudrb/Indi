@@ -38,12 +38,16 @@ export default function AddTopicPage() {
     formData.append('title', title)
     formData.append('description', description)
     formData.append('price', price.toString()) // 가격은 문자열로 저장
-    formData.append('image', image || new Blob()) // image가 null이면 빈 Blob 추가
     formData.append('category', category) // 카테고리 추가
 
     // 로그인한 사용자의 이메일을 함께 추가
     const userEmail = session?.user?.email || ''
     formData.append('userEmail', userEmail)
+
+    // 이미지가 있으면 FormData에 추가
+    if (image) {
+      formData.append('image', image)
+    }
 
     // 디버깅: FormData에 어떤 값들이 들어가 있는지 확인
     console.log('FormData userEmail:', userEmail)
