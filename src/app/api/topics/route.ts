@@ -24,6 +24,9 @@ const validCategories = [
   '기타',
 ]
 
+// 디폴트 이미지 URL 설정
+const DEFAULT_IMAGE_URL = '/uploads/no-image.png'
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
@@ -35,11 +38,10 @@ export async function POST(request: NextRequest) {
     const userEmail = formData.get('userEmail')?.toString() // 로그인한 사용자의 이메일
 
     // 유효성 검사
-    if (!title || !description || !price || !image || !category || !userEmail) {
+    if (!title || !description || !price || !category || !userEmail) {
       return NextResponse.json(
         {
-          message:
-            '상품명, 설명, 가격, 이미지, 카테고리, 이메일은 모두 필수입니다.',
+          message: '상품명, 설명, 가격, 카테고리, 이메일은 모두 필수입니다.',
         },
         { status: 400 }
       )
@@ -62,20 +64,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 이미지 파일 유형 확인
-    if (!allowedImageTypes.includes(image.type)) {
-      return NextResponse.json(
-        { message: '허용되지 않은 이미지 파일 형식입니다.' },
-        { status: 400 }
-      )
-    }
+    // 이미지 처리
+    let imageUrl = DEFAULT_IMAGE_URL // 디폴트 이미지 URL로 초기화
+    if (image) {
+      // 이미지 파일 유형 확인
+      if (!allowedImageTypes.includes(image.type)) {
+        return NextResponse.json(
+          { message: '허용되지 않은 이미지 파일 형식입니다.' },
+          { status: 400 }
+        )
+      }
 
-    // 유니크한 파일 이름 생성
-    const uniqueFileName = `${uuidv4()}-${image.name}`
-    const imagePath = path.join(uploadDir, uniqueFileName)
-    const buffer = await image.arrayBuffer()
-    fs.writeFileSync(imagePath, Buffer.from(buffer))
-    const imageUrl = `/uploads/${uniqueFileName}`
+      // 유니크한 파일 이름 생성
+      const uniqueFileName = `${uuidv4()}-${image.name}`
+      const imagePath = path.join(uploadDir, uniqueFileName)
+      const buffer = await image.arrayBuffer()
+      fs.writeFileSync(imagePath, Buffer.from(buffer))
+      imageUrl = `/uploads/${uniqueFileName}`
+    }
 
     // MongoDB 연결 및 데이터 저장
     await connectMongoDB()
@@ -84,7 +90,7 @@ export async function POST(request: NextRequest) {
       description,
       price: parsedPrice,
       category, // 카테고리 저장
-      image: imageUrl, // 저장된 이미지의 경로
+      image: imageUrl, // 저장된 이미지 또는 디폴트 이미지 경로
       userEmail, // 사용자의 이메일 추가
     })
 
