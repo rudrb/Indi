@@ -3,6 +3,9 @@ import localFont from 'next/font/local'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import { NextAuthProvider } from '@/components/Providers'
+import FloatingSidebar from '@/components/FloatingSidebar'
+import Link from 'next/link'
+import Footer from '@/components/Footer'
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -32,8 +35,15 @@ export default function RootLayout({
       >
         <NextAuthProvider>
           <div className="max-w-7xl mx-auto">
+            <div className="one pt-8">
+              <Link href="/">
+                <h1>Final Team Market</h1>
+              </Link>
+            </div>
             <Navbar></Navbar>
+            <FloatingSidebar />
             <div className="mt-8">{children}</div>
+            <Footer></Footer>
           </div>
         </NextAuthProvider>
       </body>

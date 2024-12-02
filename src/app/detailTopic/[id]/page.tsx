@@ -209,7 +209,17 @@ export default function TopicDetailPage() {
     }
   }
 
-  if (loading) return <div>Loading...</div>
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Image
+          src="/loading.gif" // 사용할 GIF 파일 경로
+          alt="Loading animation"
+          width={200}
+          height={200}
+        />
+      </div>
+    )
   if (!topic) return <div>상품을 찾을 수 없습니다.</div>
 
   const isOwner = userEmail === topic.userEmail
@@ -231,14 +241,18 @@ export default function TopicDetailPage() {
           </div>
         )}
         <div className="absolute top-0 right-0">
-          <button
-            onClick={handleAddToFavorites}
-            className={`py-2 px-4 text-sm rounded-md ${
-              isFavorite ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-800'
-            }`}
-          >
-            {isFavorite ? '찜 해제' : '찜하기'}
-          </button>
+          {!isOwner && (
+            <button
+              onClick={handleAddToFavorites}
+              className={`py-2 px-4 text-sm rounded-md ${
+                isFavorite
+                  ? 'bg-red-500 text-white'
+                  : 'bg-gray-200 text-gray-800'
+              }`}
+            >
+              {isFavorite ? '찜 해제' : '찜하기'}
+            </button>
+          )}
         </div>
       </div>
       <p className="text-gray-600 mb-4">{topic.description}</p>

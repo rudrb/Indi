@@ -1,36 +1,36 @@
-import { signIn } from '@/auth'
+'use client'
+
+import { signIn } from 'next-auth/react'
 import Image from 'next/image'
 
 export default function SignInButton() {
   return (
-    <div className="flex flex-col gap-4 mt-10 items-center">
-      <form
-        action={async () => {
-          'use server'
-          await signIn('google', { redirectTo: '/' })
-        }}
+    <div className="container">
+      <h1 className="text-center text-4xl text-pink-500 mb-10">SIGN IN</h1>
+
+      <div className="separator mb-8"></div>
+
+      {/* Google Sign-In Button */}
+      <button
+        className="google__btn flex items-center justify-center gap-4 w-full max-w-[680px] mx-auto mb-4 rounded-lg p-3"
+        onClick={() => signIn('google', { callbackUrl: '/' })}
       >
-        <button
-          type="submit"
-          className="flex items-center justify-center gap-4 rounded-lg pl-3 mb-4"
-        >
-          <Image src="/google-logo.png" height={30} width={30} alt="google" />
-          <span className="bg-blue-500 text-white px-4 py-3">
-            Sign in with Google
-          </span>
-        </button>
-      </form>
-      <form>
-        <button
-          type="submit"
-          className="flex items-center justify-center gap-4 rounded-lg pl-3 mb-4"
-        >
-          <Image src="/github-logo.png" height={30} width={30} alt="github" />
-          <span className="bg-blue-500 text-white px-4 py-3">
-            Sign in with Github
-          </span>
-        </button>
-      </form>
+        <Image src="/google-logo.png" height={30} width={30} alt="Google" />
+        <span className="flex items-center justify-center relative -top-[38px]">
+          Sign in with Google
+        </span>
+      </button>
+
+      {/* GitHub Sign-In Button */}
+      <button
+        className="github__btn flex items-center justify-center gap-4 w-full max-w-[680px] mx-auto mb-4 rounded-lg p-3"
+        onClick={() => signIn('github', { callbackUrl: '/' })}
+      >
+        <Image src="/github-logo.png" height={30} width={30} alt="GitHub" />
+        <span className="flex items-center justify-center relative -top-[38px]">
+          Sign in with GitHub
+        </span>
+      </button>
     </div>
   )
 }
