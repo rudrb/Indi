@@ -1,8 +1,18 @@
 import NextAuth from 'next-auth'
-import GitHub from 'next-auth/providers/github'
-import Google from 'next-auth/providers/google'
+import GitHubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google, GitHub],
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+  ],
   pages: {
     signIn: '/login',
   },
@@ -23,7 +33,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
           return false
         } catch (error) {
-          console.log(error)
+          console.error('Sign-in API error:', error)
           return false
         }
       }
