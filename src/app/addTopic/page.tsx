@@ -68,80 +68,121 @@ export default function AddTopicPage() {
   }
 
   return (
-    <div className="container mx-auto my-8 max-w-lg">
+    <div className="container mx-auto my-8 max-w-4xl px-4">
       <h2 className="text-2xl font-bold mb-6 text-center">상품 등록</h2>
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        {/* 상품명 */}
-        <input
-          className="border border-slate-300 p-3 rounded-md"
-          type="text"
-          placeholder="상품명"
-          value={title}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setTitle(e.target.value)
-          }
-        />
-
-        {/* 상품 설명 */}
-        <textarea
-          className="border border-slate-300 p-3 h-32 rounded-md"
-          placeholder="상세 설명"
-          value={description}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setDescription(e.target.value)
-          }
-        />
-
-        {/* 상품 가격 */}
-        <input
-          className="border border-slate-300 p-3 rounded-md"
-          type="number"
-          placeholder="상품 가격"
-          value={price}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setPrice(e.target.value)
-          }
-        />
-
-        {/* 카테고리 선택 */}
-        <select
-          className="border border-slate-300 p-3 rounded-md"
-          value={category}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setCategory(e.target.value)
-          }
-        >
-          <option value="">카테고리 선택</option>
-          <option value="가전제품">가전제품</option>
-          <option value="문구(완구)">문구(완구)</option>
-          <option value="장난감">장난감</option>
-          <option value="생필품">생필품</option>
-          <option value="가구">가구</option>
-          <option value="기타">기타</option>
-        </select>
-
-        {/* 상품 이미지 업로드 */}
-        <div>
+      <form
+        className="border border-gray-300 rounded-lg bg-white shadow-lg p-6"
+        onSubmit={handleSubmit}
+      >
+        {/* 상품 이미지 */}
+        <div className="mb-6">
           <label
             htmlFor="image"
-            className="block mb-2 font-bold text-slate-600"
+            className="block mb-2 font-bold text-gray-700 text-sm"
           >
-            상품 이미지 업로드
+            상품 이미지
+          </label>
+          <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center">
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+            />
+          </div>
+        </div>
+
+        {/* 상품명 */}
+        <div className="mb-6">
+          <label
+            htmlFor="title"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            상품명
           </label>
           <input
-            type="file"
-            id="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+            id="title"
+            type="text"
+            placeholder="상품명을 입력하세요"
+            value={title}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+
+        {/* 상품 설명 */}
+        <div className="mb-6">
+          <label
+            htmlFor="description"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            상품 설명
+          </label>
+          <textarea
+            id="description"
+            placeholder="상품에 대한 설명을 입력하세요"
+            value={description}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setDescription(e.target.value)
+            }
+            className="w-full border border-gray-300 rounded-lg p-3 h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* 상품 가격 */}
+        <div className="mb-6">
+          <label
+            htmlFor="price"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            상품 가격
+          </label>
+          <input
+            id="price"
+            type="number"
+            placeholder="상품 가격을 입력하세요"
+            value={price}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPrice(e.target.value)
+            }
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* 카테고리 */}
+        <div className="mb-6">
+          <label
+            htmlFor="category"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            카테고리
+          </label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setCategory(e.target.value)
+            }
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">카테고리를 선택하세요</option>
+            <option value="가전제품">가전제품</option>
+            <option value="문구(완구)">문구(완구)</option>
+            <option value="장난감">장난감</option>
+            <option value="생필품">생필품</option>
+            <option value="가구">가구</option>
+            <option value="기타">기타</option>
+          </select>
         </div>
 
         {/* 등록 버튼 */}
         <button
-          className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-md"
           type="submit"
           disabled={loading}
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg"
         >
           {loading ? '등록 중...' : '상품 등록'}
         </button>

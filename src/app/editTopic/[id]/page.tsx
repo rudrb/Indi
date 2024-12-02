@@ -91,29 +91,42 @@ export default function EditTopicPage() {
   if (!topic) return <p>수정할 상품을 찾을 수 없습니다.</p>
 
   return (
-    <div className="container mx-auto my-8 max-w-4xl">
-      <h2 className="text-3xl font-bold mb-4">상품 수정</h2>
-      <form onSubmit={handleUpdate} encType="multipart/form-data">
-        <div className="mb-4">
-          <label htmlFor="title" className="block text-gray-700">
-            제목
+    <div className="container mx-auto my-8 max-w-4xl px-4">
+      <h2 className="text-2xl font-bold mb-6 text-center">상품 수정</h2>
+      <form
+        onSubmit={handleUpdate}
+        encType="multipart/form-data"
+        className="border border-gray-300 rounded-lg bg-white shadow-lg p-6"
+      >
+        {/* 상품 제목 */}
+        <div className="mb-6">
+          <label
+            htmlFor="title"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            상품명
           </label>
           <input
             id="title"
             type="text"
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={topic.title}
             onChange={(e) => setTopic({ ...topic, title: e.target.value })}
             required
           />
         </div>
-        <div className="mb-4">
-          <label htmlFor="description" className="block text-gray-700">
-            설명
+
+        {/* 상품 설명 */}
+        <div className="mb-6">
+          <label
+            htmlFor="description"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            상품 설명
           </label>
           <textarea
             id="description"
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 rounded-lg p-3 h-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={topic.description}
             onChange={(e) =>
               setTopic({ ...topic, description: e.target.value })
@@ -121,14 +134,19 @@ export default function EditTopicPage() {
             required
           ></textarea>
         </div>
-        <div className="mb-4">
-          <label htmlFor="price" className="block text-gray-700">
-            가격
+
+        {/* 상품 가격 */}
+        <div className="mb-6">
+          <label
+            htmlFor="price"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
+            상품 가격
           </label>
           <input
             id="price"
             type="number"
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={topic.price}
             onChange={(e) =>
               setTopic({ ...topic, price: Number(e.target.value) })
@@ -138,13 +156,16 @@ export default function EditTopicPage() {
         </div>
 
         {/* 카테고리 선택 */}
-        <div className="mb-4">
-          <label htmlFor="category" className="block text-gray-700">
+        <div className="mb-6">
+          <label
+            htmlFor="category"
+            className="block mb-2 font-bold text-gray-700 text-sm"
+          >
             카테고리
           </label>
           <select
             id="category"
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={topic.category}
             onChange={(e) => setTopic({ ...topic, category: e.target.value })}
             required
@@ -158,36 +179,41 @@ export default function EditTopicPage() {
           </select>
         </div>
 
-        <div>
+        {/* 이미지 업로드 */}
+        <div className="mb-6">
           <label
             htmlFor="image"
-            className="block mb-2 font-bold text-slate-600"
+            className="block mb-2 font-bold text-gray-700 text-sm"
           >
-            상품 이미지 업로드
+            상품 이미지
           </label>
-          <input
-            type="file"
-            id="image"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
-          />
+          <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center">
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+            />
+          </div>
         </div>
         {topic.image && !image && (
-          <div className="mt-4">
+          <div className="mt-6 flex flex-col items-center">
             <Image
               src={topic.image}
               alt="Current product"
-              width={128} // 원하는 크기 설정
+              width={128}
               height={128}
-              className="w-32"
+              className="rounded-lg border border-gray-300"
             />
-            <p>현재 이미지</p>
+            <p className="mt-2 text-sm text-gray-600">현재 등록된 이미지</p>
           </div>
         )}
+
+        {/* 수정 버튼 */}
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg"
         >
           수정하기
         </button>
