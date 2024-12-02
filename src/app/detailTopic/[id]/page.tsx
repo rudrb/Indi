@@ -266,7 +266,7 @@ export default function TopicDetailPage() {
       {isOwner && (
         <div className="flex justify-end mb-6">
           <Link
-            href={`/edit/${topic._id}`}
+            href={`/editTopic/${topic._id}`}
             className="flex items-center py-2 px-4 text-sm font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600"
           >
             <HiPencilAlt className="mr-2" />
