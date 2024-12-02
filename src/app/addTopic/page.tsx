@@ -4,8 +4,6 @@ import { useSession } from 'next-auth/react'
 import { redirect, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-const DEFAULT_IMAGE_URL = '/public/no-image.png' // 디폴트 이미지 URL
-
 export default function AddTopicPage() {
   const { data: session } = useSession()
   const router = useRouter()
@@ -40,14 +38,8 @@ export default function AddTopicPage() {
     formData.append('title', title)
     formData.append('description', description)
     formData.append('price', price.toString()) // 가격은 문자열로 저장
+    formData.append('image', image || new Blob()) // image가 null이면 빈 Blob 추가
     formData.append('category', category) // 카테고리 추가
-
-    // 이미지 처리: 업로드한 이미지가 없으면 디폴트 이미지 URL 추가
-    if (image) {
-      formData.append('image', image) // 업로드한 이미지가 있는 경우
-    } else {
-      formData.append('image', DEFAULT_IMAGE_URL) // 디폴트 이미지 사용
-    }
 
     // 로그인한 사용자의 이메일을 함께 추가
     const userEmail = session?.user?.email || ''
