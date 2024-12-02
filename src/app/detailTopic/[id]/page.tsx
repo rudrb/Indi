@@ -51,18 +51,16 @@ export default function TopicDetailPage() {
         const data = await res.json()
         setTopic(data)
 
-        // 댓글 불러오기
         const commentRes = await fetch(`/api/comments?topicId=${id}`)
         if (!commentRes.ok) throw new Error('Failed to fetch comments')
-        const { comments, sellerEmail } = await commentRes.json() // 판매자 이메일도 가져옴
+        const { comments, sellerEmail } = await commentRes.json()
         setComments(
           comments.map((comment: Comment) => ({
             ...comment,
-            isSeller: comment.userEmail === sellerEmail, // 댓글 작성자가 판매자인지 확인
+            isSeller: comment.userEmail === sellerEmail,
           }))
         )
 
-        // 찜한 상품 여부 확인
         const favoritesRes = await fetch(
           `/api/favorites?userEmail=${userEmail}`
         )
@@ -74,7 +72,6 @@ export default function TopicDetailPage() {
         )
         setIsFavorite(isProductFavorited)
 
-        // 방문한 상품 정보 로컬 스토리지에 저장
         const visitedProducts = JSON.parse(
           localStorage.getItem('visitedProducts') || '[]'
         )
@@ -218,119 +215,128 @@ export default function TopicDetailPage() {
   const isOwner = userEmail === topic.userEmail
 
   return (
-    <div className="container mx-auto my-8 max-w-4xl">
-      <h2 className="text-3xl font-bold mb-4">{topic.title}</h2>
+    <div className="container mx-auto max-w-4xl p-6 bg-white shadow-md rounded-lg">
+      <div className="relative">
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">{topic.title}</h1>
+        {topic.image && (
+          <div className="flex justify-center mb-6">
+            <Image
+              src={topic.image}
+              alt={topic.title}
+              width={600}
+              height={400}
+              className="cursor-pointer rounded-lg shadow-lg"
+              onClick={() => handleImageClick(topic.image!)}
+            />
+          </div>
+        )}
+        <div className="absolute top-0 right-0">
+          <button
+            onClick={handleAddToFavorites}
+            className={`py-2 px-4 text-sm rounded-md ${
+              isFavorite ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-800'
+            }`}
+          >
+            {isFavorite ? '찜 해제' : '찜하기'}
+          </button>
+        </div>
+      </div>
+      <p className="text-gray-600 mb-4">{topic.description}</p>
+      <p className="text-lg font-semibold text-gray-900">
+        가격: ₩{topic.price}
+      </p>
       <p className="text-sm text-gray-500 mb-4">
-        카테고리: <span className="font-semibold">{topic.category}</span>
+        카테고리: {topic.category || '없음'}
       </p>
 
-      <div className="mb-6">
-        <Image
-          src={topic.image || '/default-avatar.png'}
-          alt={topic.title}
-          width={500}
-          height={320}
-          className="w-full h-80 object-cover rounded-md cursor-pointer"
-          onClick={() => handleImageClick(topic.image || '/default-avatar.png')}
-        />
-      </div>
-      <p className="text-lg text-gray-800 mb-6">{topic.description}</p>
-      <p className="text-xl font-bold text-gray-900 mb-6">{topic.price}원</p>
+      {isOwner && (
+        <div className="flex justify-end mb-6">
+          <Link
+            href={`/edit/${topic._id}`}
+            className="flex items-center py-2 px-4 text-sm font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          >
+            <HiPencilAlt className="mr-2" />
+            수정하기
+          </Link>
+          <RemoveBtn id={topic._id} />
+        </div>
+      )}
 
-      <div className="flex gap-4">
-        {!isOwner ? (
-          <>
-            <button
-              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
-              onClick={() => alert('구매하기 기능')}
-            >
-              구매하기
-            </button>
-            <button
-              className={`py-2 px-4 rounded-md ${
-                isFavorite ? 'bg-red-600' : 'bg-gray-600'
-              } text-white`}
-              onClick={handleAddToFavorites}
-            >
-              {isFavorite ? '찜 목록에서 삭제' : '찜하기'}
-            </button>
-          </>
-        ) : (
-          <>
-            <Link href={`/editTopic/${topic._id}`} className="text-blue-600">
-              <HiPencilAlt size={20} />
-            </Link>
-            <RemoveBtn id={id} />
-          </>
-        )}
-      </div>
-
-      {/* 댓글 영역 */}
-      <div className="mt-8">
-        <h3 className="text-2xl font-semibold mb-4">댓글</h3>
-        <div className="space-y-4 max-h-64 overflow-y-auto">
+      <div className="comments-section mt-8">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">댓글</h2>
+        <div className="mb-4">
+          <textarea
+            className="w-full h-20 p-3 border border-gray-300 rounded-md"
+            placeholder="댓글을 작성하세요..."
+            value={newComment}
+            onChange={handleCommentChange}
+          />
+          <button
+            onClick={handleCommentSubmit}
+            className="mt-2 py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600"
+          >
+            {editingCommentId ? '댓글 수정' : '댓글 작성'}
+          </button>
+        </div>
+        <ul className="space-y-4">
           {comments.map((comment) => (
-            <div key={comment._id} className="border-b pb-2">
-              <p className="text-gray-800">{comment.content}</p>
-              <p className="text-sm text-gray-500">
-                {comment.userEmail}
-                {comment.isSeller && (
-                  <span className="text-blue-500 ml-2">[판매자]</span>
-                )}
-              </p>
+            <li
+              key={comment._id}
+              className="p-4 border border-gray-200 rounded-md"
+            >
+              <div className="flex justify-between items-center">
+                <span
+                  className={`font-semibold ${
+                    comment.isSeller ? 'text-blue-600' : 'text-gray-800'
+                  }`}
+                >
+                  {comment.userEmail} {comment.isSeller ? '(판매자)' : ''}
+                </span>
+                <span className="text-sm text-gray-500">
+                  {new Date(comment.createdAt).toLocaleString()}
+                </span>
+              </div>
+              <p className="text-gray-700 mt-2">{comment.content}</p>
               {comment.userEmail === userEmail && (
-                <div className="mt-2 flex gap-2">
+                <div className="flex justify-end mt-2 space-x-2">
                   <button
                     onClick={() => handleCommentEdit(comment._id)}
-                    className="text-blue-600"
+                    className="text-sm text-blue-500 hover:underline"
                   >
                     수정
                   </button>
                   <button
                     onClick={() => handleCommentDelete(comment._id)}
-                    className="text-red-600"
+                    className="text-sm text-red-500 hover:underline"
                   >
                     삭제
                   </button>
                 </div>
               )}
-            </div>
+            </li>
           ))}
-        </div>
-
-        {/* 댓글 작성 */}
-        <textarea
-          value={newComment}
-          onChange={handleCommentChange}
-          placeholder="댓글을 작성하세요"
-          rows={3}
-          className="w-full border p-2 rounded-md mt-4"
-        />
-        <button
-          onClick={handleCommentSubmit}
-          className="bg-blue-600 text-white py-2 px-4 rounded-md mt-2"
-        >
-          댓글 {editingCommentId ? '수정' : '작성'}
-        </button>
+        </ul>
       </div>
 
-      {/* 모달 */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50">
-          <div className="relative w-full h-full">
+      {isModalOpen && modalImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50"
+          onClick={closeModal}
+        >
+          <div className="relative">
+            <Image
+              src={modalImage}
+              alt="확대 이미지"
+              width={800}
+              height={600}
+              className="rounded-lg shadow-lg"
+            />
             <button
-              className="absolute top-0 right-0 p-4 text-white bg-red-600 rounded-full"
               onClick={closeModal}
+              className="absolute top-2 right-2 text-white bg-red-600 rounded-full p-2"
             >
               X
             </button>
-            <Image
-              src={modalImage || '/default-avatar.png'}
-              alt="Modal Image"
-              width={1000}
-              height={1000}
-              className="w-full h-full object-contain"
-            />
           </div>
         </div>
       )}
