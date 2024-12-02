@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import { redirect, useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-const DEFAULT_IMAGE_URL = '@/no-image.png' // 디폴트 이미지 URL
+const DEFAULT_IMAGE_URL = 'public/no-image.png // 디폴트 이미지 URL
 
 export default function AddTopicPage() {
   const { data: session } = useSession()
