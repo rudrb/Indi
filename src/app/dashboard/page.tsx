@@ -10,6 +10,9 @@ export default function DashboardPage() {
 
   if (!session) return <div>Loading...</div>
 
+  // session.user?.email이 undefined인 경우에 기본값 처리
+  const userEmail = session.user?.email ?? ''
+
   return (
     <div className="container mx-auto my-8 max-w-4xl">
       <h1 className="text-3xl font-bold mb-6">마이 페이지</h1>
@@ -18,7 +21,9 @@ export default function DashboardPage() {
       <div className="mb-8">
         <h2 className="text-2xl font-semibold">내 정보</h2>
         <p className="mt-2">이름: {session.user?.name}</p>
-        <p className="mt-2">이메일: {session.user?.email}</p>
+        <p className="mt-2">
+          이메일: {session.user?.email || '이메일 정보 없음'}
+        </p>
       </div>
 
       {/* 내가 등록한 상품 */}
@@ -27,8 +32,13 @@ export default function DashboardPage() {
         <UserTopicList />
       </div>
 
+      {/* 즐겨찾기 목록 */}
       <div className="mb-8">
-        <FavoritesList userEmail={session.user?.email!} />
+        {userEmail ? (
+          <FavoritesList userEmail={userEmail} />
+        ) : (
+          <p>이메일 정보가 없어 즐겨찾기를 불러올 수 없습니다.</p>
+        )}
       </div>
     </div>
   )

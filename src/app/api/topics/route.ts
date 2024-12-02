@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // MongoDB 연결
     await connectMongoDB()
