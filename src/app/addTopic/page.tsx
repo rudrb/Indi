@@ -28,8 +28,8 @@ export default function AddTopicPage() {
     e.preventDefault()
 
     // 유효성 검사
-    if (!title || !description || !price || !image || !category) {
-      alert('상품명, 가격, 설명, 이미지, 카테고리가 모두 필요합니다.')
+    if (!title || !description || !price || !category) {
+      alert('상품명, 가격, 설명,  카테고리가 모두 필요합니다.')
       return
     }
 
