@@ -13,15 +13,23 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="flex flex-col md:flex-row justify-between items-center bg-white px-8 py-4 shadow gap-4 border-b-4 border-brown-500">
+    <nav className="flex flex-col md:flex-row justify-between items-center bg-gray-300 px-8 py-4 shadow gap-4 border-b-4 border-brown-500">
+      <div className="flex gap-2 items-center">
+        <Image
+          src={session?.user?.image ?? '/default-avatar.png'}
+          width={40}
+          height={40}
+          alt={session?.user?.name ?? 'user'}
+          className="rounded-full"
+        />
+        <span className="text-gray-800 font-bold">{session?.user?.name}</span>
+      </div>
       <hr className="my-6 border-blueGray-600" />
       {/* Logo */}
       <Link
         href="/"
         className="text-lg font-bold text-white hover:underline hover:text-brown-600"
-      >
-        FinalTeamMarket
-      </Link>
+      ></Link>
 
       {/* Navigation Links */}
 
@@ -30,40 +38,20 @@ export default function Navbar() {
         {status === 'authenticated' ? (
           <>
             {/* Product Add Button */}
-            <li>
-              <Link
-                href="/dashboard"
-                className="text-gray-600 hover:underline hover:text-brown-600"
-              >
-                My Page
-              </Link>
-            </li>
-            <Link
-              href="/addTopic"
-              className="bg-cyan-200 hover:bg-cyan-300 text-black px-4 py-2 rounded-md text-lg font-bold transition-all"
-            >
-              상품 등록
-            </Link>
             {/* User Info */}
-            <div className="flex gap-2 items-center">
-              <Image
-                src={session?.user?.image ?? '/default-avatar.png'}
-                width={40}
-                height={40}
-                alt={session?.user?.name ?? 'user'}
-                className="rounded-full"
-              />
-              <span className="text-gray-800 font-bold">
-                {session?.user?.name}
-              </span>
-            </div>
             {/* Sign Out Button */}
             <button
               onClick={handleSignOut}
-              className="bg-sky-300 hover:bg-sky-400 text-black px-4 py-2 rounded-md text-lg font-bold transition-all"
+              className="bg-pink-300 hover:bg-pink-400 text-white px-4 py-2 rounded-md text-lg font-bold transition-all"
             >
               Sign Out
-            </button>
+            </button>{' '}
+            <Link
+              href="/addTopic"
+              className="bg-pink-400 hover:bg-pink-300 text-white px-4 py-2 rounded-md text-lg font-bold transition-all"
+            >
+              상품 등록
+            </Link>
           </>
         ) : (
           <Link

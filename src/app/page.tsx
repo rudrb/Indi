@@ -15,8 +15,8 @@ export default function Home() {
         >
           <div className="container mx-auto">
             <div className="flex flex-col items-center">
-              <h2 className="text-2xl font-bold mb-4">Used market</h2>
-              <p className="text-lg text-gray-700 mb-6">
+              <h2 className="text-7xl font-bold mb-4">Used market</h2>
+              <p className="text-3xl text-gray-700 mb-6">
                 좋은 상품을 합리적인 가격에 만나보세요!
               </p>
             </div>
