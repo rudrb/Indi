@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import Topic from '@/models/topic'
+import connectMongoDB from '@/libs/mongodb'
 import fs from 'fs'
 import path from 'path'
 
@@ -27,70 +28,50 @@ export const GET = async (
   }
 }
 
-export const PUT = async (
+export async function PUT(
   req: NextRequest,
   { params }: { params: { id: string } }
-) => {
+) {
+  const id = params.id
+
   try {
-    const formData = await req.formData() // FormData로 요청 데이터 받기
+    // JSON 데이터 읽기
+    const body = await req.json()
+    const { title, description, price, category, image } = body
 
-    const title = formData.get('title')?.toString()
-    const description = formData.get('description')?.toString()
-    const price = formData.get('price')
-      ? Number(formData.get('price'))
-      : undefined
-    const category = formData.get('category')?.toString() // 카테고리 추가
-    const newImage = formData.get('newImage') as File | null
-    const oldImage = formData.get('oldImage')?.toString()
-
-    const updatedData: any = { title, description, price, category } // 카테고리 포함
-
-    // 새 이미지를 업로드할 경우
-    if (newImage) {
-      // 기존 이미지를 삭제
-      if (oldImage) {
-        const oldImagePath = path.join(
-          process.cwd(),
-          'public',
-          'uploads',
-          oldImage
-        )
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath)
-        }
-      }
-
-      // 새 이미지 저장
-      const newImagePath = path.join(
-        process.cwd(),
-        'public',
-        'uploads',
-        newImage.name
+    // 유효성 검사
+    if (!title || !description || !price || !category) {
+      return NextResponse.json(
+        { message: '모든 필드를 채워주세요.' },
+        { status: 400 }
       )
-      const buffer = Buffer.from(await newImage.arrayBuffer())
-      fs.writeFileSync(newImagePath, buffer)
-
-      // 절대 경로로 저장
-      updatedData.image = `/uploads/${newImage.name}` // 클라이언트에서 접근할 경로
     }
 
-    // 상품 수정
-    const topic = await Topic.findByIdAndUpdate(params.id, updatedData, {
-      new: true, // 수정된 데이터를 반환
-    })
+    // MongoDB 연결
+    await connectMongoDB()
 
-    if (!topic) {
+    // 데이터 업데이트
+    const updatedTopic = await Topic.findByIdAndUpdate(
+      id,
+      { title, description, price, category, image },
+      { new: true } // 업데이트된 데이터를 반환
+    )
+
+    if (!updatedTopic) {
       return NextResponse.json(
         { message: '상품을 찾을 수 없습니다.' },
         { status: 404 }
       )
     }
 
-    return NextResponse.json(topic) // 수정된 상품 정보를 반환
-  } catch (error) {
-    console.error('상품 수정 중 오류 발생:', error)
     return NextResponse.json(
-      { message: '상품 수정 중 오류 발생' },
+      { message: '상품이 성공적으로 수정되었습니다.', updatedTopic },
+      { status: 200 }
+    )
+  } catch (error) {
+    console.error('Error updating topic:', error)
+    return NextResponse.json(
+      { message: 'Internal server error' },
       { status: 500 }
     )
   }

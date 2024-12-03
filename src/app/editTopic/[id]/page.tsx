@@ -75,26 +75,26 @@ export default function EditTopicPage() {
 
     try {
       setLoading(true)
-      let imageUrl = topic.image // 기존 이미지 URL을 기본값으로 사용
+      let imageUrl = topic.image // 기존 이미지 URL
 
       // 새 이미지를 업로드한 경우 Cloudinary에 업로드
       if (image) {
         imageUrl = await uploadImageToCloudinary(image)
       }
 
-      // 서버로 수정된 데이터 전송
+      // JSON 형식으로 수정된 데이터 서버로 전송
       const payload = {
         title: topic.title,
         description: topic.description,
         price: topic.price,
         category: topic.category,
-        image: imageUrl, // 새로운 또는 기존 이미지 URL
+        image: imageUrl, // Cloudinary URL
       }
 
       const res = await fetch(`/api/topics/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json', // JSON 데이터 전송
         },
         body: JSON.stringify(payload),
       })
@@ -102,7 +102,7 @@ export default function EditTopicPage() {
       if (!res.ok) throw new Error('Failed to update topic')
 
       alert('상품이 성공적으로 수정되었습니다.')
-      router.push('/') // 수정 완료 후 메인 페이지로 이동
+      router.push('/')
     } catch (error) {
       console.error('Error updating topic:', error)
       alert('상품 수정에 실패했습니다.')
