@@ -51,7 +51,17 @@ export default function TopicLists() {
     fetchTopics()
   }, [session]) // session이 변경될 때마다 실행
 
-  if (loading) return <p>Loading topics...</p>
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Image
+          src="/loading.gif" // 사용할 GIF 파일 경로
+          alt="Loading animation"
+          width={200}
+          height={200}
+        />
+      </div>
+    )
   if (error) return <p>Error: {error}</p>
   if (topics.length === 0)
     return <p className="text-gray-500 mt-4">등록한 상품이 없습니다...</p>
