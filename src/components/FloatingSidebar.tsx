@@ -8,6 +8,7 @@ import {
   FiInfo,
   FiArrowUp,
   FiPlus,
+  FiHelpCircle, // 추가된 아이콘
 } from 'react-icons/fi'
 import { useSession } from 'next-auth/react'
 
@@ -88,6 +89,19 @@ export default function FloatingSidebar() {
               </div>
               <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap overflow-hidden">
                 About Us
+              </span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/contact"
+              className="flex items-center gap-4 text-gray-700 hover:text-blue-500 transition-colors"
+            >
+              <div className="min-w-[24px]">
+                <FiHelpCircle size={24} />
+              </div>
+              <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap overflow-hidden">
+                문의하기
               </span>
             </Link>
           </li>

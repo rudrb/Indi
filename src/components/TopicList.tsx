@@ -144,7 +144,10 @@ export default function TopicLists() {
           <select
             id="dateSort"
             value={dateSortOrder}
-            onChange={(e) => setDateSortOrder(e.target.value)}
+            onChange={(e) => {
+              setDateSortOrder(e.target.value) // 날짜 정렬 설정
+              setPriceSortOrder('') // 가격 정렬 초기화
+            }}
             className="border border-gray-300 rounded-md p-2"
           >
             <option value="desc">최신순</option>
