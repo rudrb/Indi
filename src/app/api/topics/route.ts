@@ -1,18 +1,6 @@
 import connectMongoDB from '@/libs/mongodb'
 import Topic from '@/models/topic'
 import { NextRequest, NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
-import { v4 as uuidv4 } from 'uuid'
-
-// 이미지 저장 디렉토리 설정
-const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true })
-}
-
-// 허용된 이미지 타입
-const allowedImageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
 
 // 가능한 카테고리 값들
 const validCategories = [
@@ -24,25 +12,16 @@ const validCategories = [
   '기타',
 ]
 
-// 디폴트 이미지 URL 설정
-const DEFAULT_IMAGE_URL = '/uploads/no-image.png'
-
+// POST 메서드: Topic 생성
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    const title = formData.get('title')?.toString()
-    const description = formData.get('description')?.toString()
-    const price = formData.get('price')?.toString()
-    const category = formData.get('category')?.toString() // 카테고리 추가
-    const image = formData.get('image') as File | null
-    const userEmail = formData.get('userEmail')?.toString() // 로그인한 사용자의 이메일
+    const body = await request.json() // JSON 데이터 읽기
+    const { title, description, price, category, image, userEmail } = body
 
     // 유효성 검사
     if (!title || !description || !price || !category || !userEmail) {
       return NextResponse.json(
-        {
-          message: '상품명, 설명, 가격, 카테고리, 이메일은 모두 필수입니다.',
-        },
+        { message: '상품명, 설명, 가격, 카테고리, 이메일은 모두 필수입니다.' },
         { status: 400 }
       )
     }
@@ -64,34 +43,15 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 이미지 처리
-    let imageUrl = DEFAULT_IMAGE_URL // 디폴트 이미지 URL로 초기화
-    if (image) {
-      // 이미지 파일 유형 확인
-      if (!allowedImageTypes.includes(image.type)) {
-        return NextResponse.json(
-          { message: '허용되지 않은 이미지 파일 형식입니다.' },
-          { status: 400 }
-        )
-      }
-
-      // 유니크한 파일 이름 생성
-      const uniqueFileName = `${uuidv4()}-${image.name}`
-      const imagePath = path.join(uploadDir, uniqueFileName)
-      const buffer = await image.arrayBuffer()
-      fs.writeFileSync(imagePath, Buffer.from(buffer))
-      imageUrl = `/uploads/${uniqueFileName}`
-    }
-
     // MongoDB 연결 및 데이터 저장
     await connectMongoDB()
     const newTopic = await Topic.create({
       title,
       description,
       price: parsedPrice,
-      category, // 카테고리 저장
-      image: imageUrl, // 저장된 이미지 또는 디폴트 이미지 경로
-      userEmail, // 사용자의 이메일 추가
+      category,
+      image: image || null, // Cloudinary 등에서 받은 이미지 URL 사용
+      userEmail,
     })
 
     return NextResponse.json(
@@ -107,6 +67,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// GET 메서드: 모든 Topic 조회
 export async function GET() {
   try {
     // MongoDB 연결

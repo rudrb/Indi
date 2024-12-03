@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'avatars.githubusercontent.com',
       },
+      {
+        protocol: 'https', // Cloudinary 도메인 추가
+        hostname: 'res.cloudinary.com',
+      },
     ],
   },
 

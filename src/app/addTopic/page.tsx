@@ -24,48 +24,76 @@ export default function AddTopicPage() {
     setImage(file)
   }
 
+  /**
+   * Cloudinary에 이미지를 업로드하는 함수
+   * @param image 업로드할 이미지 파일
+   * @returns 업로드된 이미지의 URL
+   */
+  const uploadImageToCloudinary = async (image: File): Promise<string> => {
+    const formData = new FormData()
+    formData.append('file', image)
+    formData.append('upload_preset', 'ay1ovxr7') // Cloudinary에서 설정한 upload preset
+    formData.append('cloud_name', 'dkce7iuyq') // Cloudinary Cloud Name
+
+    try {
+      const res = await fetch(
+        'https://api.cloudinary.com/v1_1/dkce7iuyq/image/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
+      const data = await res.json()
+      return data.secure_url // 업로드된 이미지 URL 반환
+    } catch (error) {
+      console.error('Cloudinary 이미지 업로드 실패:', error)
+      throw new Error('이미지 업로드에 실패했습니다.')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    // 유효성 검사
     if (!title || !description || !price || !category) {
       alert('상품명, 가격, 설명, 카테고리가 모두 필요합니다.')
       return
     }
 
     setLoading(true)
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('description', description)
-    formData.append('price', price.toString()) // 가격은 문자열로 저장
-    formData.append('category', category) // 카테고리 추가
-
-    // 로그인한 사용자의 이메일을 함께 추가
-    const userEmail = session?.user?.email || ''
-    formData.append('userEmail', userEmail)
-
-    // 이미지가 있으면 FormData에 추가
-    if (image) {
-      formData.append('image', image)
-    }
-
-    // 디버깅: FormData에 어떤 값들이 들어가 있는지 확인
-    console.log('FormData userEmail:', userEmail)
-    console.log('FormData category:', category)
+    let imageUrl = ''
 
     try {
+      // 이미지가 있을 경우 Cloudinary에 업로드
+      if (image) {
+        imageUrl = await uploadImageToCloudinary(image)
+      }
+
+      // 상품 데이터 서버로 전송
+      const payload = {
+        title,
+        description,
+        price,
+        category,
+        image: imageUrl, // 업로드된 Cloudinary 이미지 URL
+        userEmail: session?.user?.email || '',
+      }
+
       const res = await fetch('/api/topics', {
         method: 'POST',
-        body: formData, // FormData를 전송
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       })
 
       if (res.ok) {
+        alert('상품이 성공적으로 등록되었습니다.')
         router.push('/') // 상품 등록 후 홈으로 리다이렉트
       } else {
         throw new Error('상품 등록에 실패했습니다.')
       }
     } catch (error) {
-      console.error('Error submitting form:', error)
+      console.error('상품 등록 에러:', error)
     } finally {
       setLoading(false)
     }
