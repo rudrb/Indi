@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import Image from 'next/image' // next/image 임포트
+import Image from 'next/image'
 
 interface Topic {
   _id: string
@@ -10,17 +10,16 @@ interface Topic {
   description: string
   image?: string
   price: number
-  category: string // 카테고리 추가
+  category: string
 }
 
 export default function EditTopicPage() {
-  const params = useParams() // URL에서 id 가져오기
-  const router = useRouter() // 페이지 이동을 위해 사용
+  const params = useParams()
+  const router = useRouter()
   const id = params?.id
   const [topic, setTopic] = useState<Topic | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
   const [image, setImage] = useState<File | null>(null)
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,32 +47,56 @@ export default function EditTopicPage() {
     fetchTopic()
   }, [id])
 
+  const uploadImageToCloudinary = async (image: File): Promise<string> => {
+    const formData = new FormData()
+    formData.append('file', image)
+    formData.append('upload_preset', 'ay1ovxr7') // Cloudinary에서 설정한 upload preset
+    formData.append('cloud_name', 'dkce7iuyq') // Cloudinary Cloud Name
+
+    try {
+      const res = await fetch(
+        'https://api.cloudinary.com/v1_1/dkce7iuyq/image/upload',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      )
+      const data = await res.json()
+      return data.secure_url // 업로드된 이미지 URL 반환
+    } catch (error) {
+      console.error('Cloudinary 이미지 업로드 실패:', error)
+      throw new Error('이미지 업로드에 실패했습니다.')
+    }
+  }
+
   const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!topic) return
 
-    const formData = new FormData()
-
-    // 이미지가 있는 경우, 이미지를 formData에 추가
-    if (image) {
-      formData.append('newImage', image)
-    }
-
-    // 기존 topic 데이터와 변경된 제목, 설명, 가격을 formData에 추가
-    formData.append('title', topic.title)
-    formData.append('description', topic.description)
-    formData.append('price', topic.price.toString())
-    formData.append('category', topic.category) // 카테고리 값 추가
-
-    // 기존 이미지를 삭제하고 새로운 이미지가 있다면 업로드
-    if (topic.image) {
-      formData.append('oldImage', topic.image.split('/uploads/')[1]) // 파일명만 보내기
-    }
-
     try {
+      setLoading(true)
+      let imageUrl = topic.image // 기존 이미지 URL을 기본값으로 사용
+
+      // 새 이미지를 업로드한 경우 Cloudinary에 업로드
+      if (image) {
+        imageUrl = await uploadImageToCloudinary(image)
+      }
+
+      // 서버로 수정된 데이터 전송
+      const payload = {
+        title: topic.title,
+        description: topic.description,
+        price: topic.price,
+        category: topic.category,
+        image: imageUrl, // 새로운 또는 기존 이미지 URL
+      }
+
       const res = await fetch(`/api/topics/${id}`, {
         method: 'PUT',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       })
 
       if (!res.ok) throw new Error('Failed to update topic')
@@ -83,6 +106,8 @@ export default function EditTopicPage() {
     } catch (error) {
       console.error('Error updating topic:', error)
       alert('상품 수정에 실패했습니다.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -95,7 +120,6 @@ export default function EditTopicPage() {
       <h2 className="text-2xl font-bold mb-6 text-center">상품 수정</h2>
       <form
         onSubmit={handleUpdate}
-        encType="multipart/form-data"
         className="border border-gray-300 rounded-lg bg-white shadow-lg p-6"
       >
         {/* 상품 제목 */}
