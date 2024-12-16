@@ -1,32 +1,24 @@
-// src/models/topic.ts
-import mongoose, { Schema, Model } from 'mongoose'
+import mongoose, { Schema, Document } from 'mongoose'
 
-interface ITopic {
+interface ITopic extends Document {
   title: string
   description: string
-  price: number
-  image?: string
-  userEmail: string // 상품을 올린 사용자의 이메일 추가
-  category: string // 카테고리 추가
+  image: string
+  userEmail: string
 }
 
-const topicSchema = new Schema<ITopic>({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  price: { type: Number, required: true },
-  image: { type: String },
-  userEmail: { type: String, required: true }, // 상품 등록자의 이메일
-  category: {
-    type: String,
-    required: true,
+const TopicSchema: Schema = new Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    image: { type: String, default: '' }, // 기본값 추가
+    userEmail: { type: String, required: true },
   },
-})
+  { timestamps: true }
+)
 
-let Topic: Model<ITopic>
-try {
-  Topic = mongoose.model<ITopic>('Topic')
-} catch {
-  Topic = mongoose.model<ITopic>('Topic', topicSchema)
-}
+// Check if the model is already defined
+const Topic =
+  mongoose.models.Topic || mongoose.model<ITopic>('Topic', TopicSchema)
 
 export default Topic

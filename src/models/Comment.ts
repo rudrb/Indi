@@ -1,28 +1,19 @@
-import mongoose, { Schema, Model } from 'mongoose'
+// src/models/Comment.ts
+import mongoose, { Schema, Document } from 'mongoose'
 
-interface IComment {
+interface IComment extends Document {
   content: string
-  userEmail: string // 댓글 작성자의 이메일
-  topicId: mongoose.Schema.Types.ObjectId // 댓글이 달린 상품의 ID
+  author: string
   createdAt: Date
 }
 
-const commentSchema = new Schema<IComment>({
+const CommentSchema: Schema = new Schema({
   content: { type: String, required: true },
-  userEmail: { type: String, required: true },
-  topicId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Topic',
-    required: true,
-  }, // 상품과 연결
+  author: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 })
 
-let Comment: Model<IComment>
-try {
-  Comment = mongoose.model<IComment>('Comment')
-} catch {
-  Comment = mongoose.model<IComment>('Comment', commentSchema)
-}
+const Comment =
+  mongoose.models.Comment || mongoose.model<IComment>('Comment', CommentSchema)
 
 export default Comment

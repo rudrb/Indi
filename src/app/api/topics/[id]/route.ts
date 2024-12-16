@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { NextRequest, NextResponse } from 'next/server'
 import Topic from '@/models/topic'
 import connectMongoDB from '@/libs/mongodb'
@@ -7,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 
 export const GET = async (
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   try {
@@ -37,10 +35,10 @@ export async function PUT(
   try {
     // JSON 데이터 읽기
     const body = await req.json()
-    const { title, description, price, category, image } = body
+    const { title, description, image } = body
 
     // 유효성 검사
-    if (!title || !description || !price || !category) {
+    if (!title || !description) {
       return NextResponse.json(
         { message: '모든 필드를 채워주세요.' },
         { status: 400 }
@@ -50,10 +48,32 @@ export async function PUT(
     // MongoDB 연결
     await connectMongoDB()
 
+    // 이전 Topic 가져오기 (이미지 처리용)
+    const topic = await Topic.findById(id)
+    if (!topic) {
+      return NextResponse.json(
+        { message: '상품을 찾을 수 없습니다.' },
+        { status: 404 }
+      )
+    }
+
+    // 이미지 파일 삭제 처리 (이미지 업데이트 시)
+    if (image && topic.image !== image) {
+      // 이전 이미지 파일 삭제
+      const oldImagePath = path.join(
+        process.cwd(),
+        'public',
+        topic.image.replace('/uploads/', '')
+      )
+      if (fs.existsSync(oldImagePath)) {
+        await fs.promises.unlink(oldImagePath) // 비동기 파일 삭제
+      }
+    }
+
     // 데이터 업데이트
     const updatedTopic = await Topic.findByIdAndUpdate(
       id,
-      { title, description, price, category, image },
+      { title, description, image },
       { new: true } // 업데이트된 데이터를 반환
     )
 
@@ -78,7 +98,7 @@ export async function PUT(
 }
 
 export const DELETE = async (
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   try {
@@ -99,7 +119,7 @@ export const DELETE = async (
         topic.image.replace('/uploads/', '')
       )
       if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath) // 파일 삭제
+        await fs.promises.unlink(imagePath) // 비동기 파일 삭제
       }
     }
 

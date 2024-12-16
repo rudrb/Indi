@@ -1,16 +1,21 @@
-import mongoose from 'mongoose'
+// src/models/Favorite.ts
+import mongoose, { Schema, Document } from 'mongoose'
 
-const FavoriteSchema = new mongoose.Schema(
+interface IFavorite extends Document {
+  userId: string
+  postId: string
+}
+
+const FavoriteSchema: Schema = new Schema(
   {
-    topicId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Topic',
-      required: true,
-    },
-    userEmail: { type: String, required: true },
+    userId: { type: String, required: true },
+    postId: { type: String, required: true },
   },
   { timestamps: true }
 )
 
-export default mongoose.models.Favorite ||
-  mongoose.model('Favorite', FavoriteSchema)
+const Favorite =
+  mongoose.models.Favorite ||
+  mongoose.model<IFavorite>('Favorite', FavoriteSchema)
+
+export default Favorite

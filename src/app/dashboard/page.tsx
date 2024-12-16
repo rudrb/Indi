@@ -1,43 +1,60 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-
 import UserTopicList from '@/components/UserTopicList'
-import FavoritesList from '@/components/FavoritesList'
 
 export default function DashboardPage() {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
-  if (!session) return <div>Loading...</div>
+  // 세션이 로딩 중일 때 처리
+  if (status === 'loading')
+    return <div className="text-center text-xl text-gray-600">로딩 중...</div>
 
-  // session.user?.email이 undefined인 경우에 기본값 처리
-  const userEmail = session.user?.email ?? ''
+  // 세션이 없다면 로그인 페이지로 리디렉션 또는 '로그인 필요' 메시지 표시
+  if (!session)
+    return (
+      <div className="text-center text-xl text-red-600">
+        로그인이 필요합니다
+      </div>
+    )
 
   return (
-    <div className="container mx-auto my-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">마이 페이지</h1>
+    <div className="container mx-auto my-8 max-w-4xl p-4 bg-white rounded-lg shadow-lg">
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">마이 페이지</h1>
 
       {/* 사용자 정보 */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold">내 정보</h2>
-        <p className="mt-2">이름: {session.user?.name}</p>
-        <p className="mt-2">
-          이메일: {session.user?.email || '이메일 정보 없음'}
-        </p>
+      <div className="mb-6 p-4 bg-gray-50 border-2 border-primary rounded-lg shadow-sm">
+        <h2 className="text-xl font-semibold text-gray-700 mb-2">내 정보</h2>
+        {/* 기본 이미지 추가 */}
+        <div className="my-2 flex justify-center">
+          <img
+            src="default.jpg" // 기본 이미지 경로
+            alt="Default Profile"
+            className="w-28 h-28 rounded-full border-4 border-primary mb-3 shadow-md"
+          />
+        </div>
+        <div className="text-lg text-gray-700">
+          <p className="mt-1">
+            <span className="font-semibold">이름:</span>{' '}
+            {session.user?.name || '이름 정보 없음'}
+          </p>
+          <p className="mt-1">
+            <span className="font-semibold">이메일:</span>{' '}
+            {session.user?.email || '이메일 정보 없음'}
+          </p>
+        </div>
       </div>
 
-      {/* 내가 등록한 상품 */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold">내가 등록한 상품</h2>
-        <UserTopicList />
-      </div>
-
-      {/* 즐겨찾기 목록 */}
-      <div className="mb-8">
-        {userEmail ? (
-          <FavoritesList userEmail={userEmail} />
+      {/* 내가 등록한 게시물 */}
+      <div className="mb-6 p-4 bg-gray-50 border-2 border-primary rounded-lg shadow-sm">
+        <h2 className="text-xl font-semibold text-gray-700 mb-2">
+          내가 등록한 게시물
+        </h2>
+        {/* session이 존재할 때만 UserTopicList를 렌더링 */}
+        {session ? (
+          <UserTopicList />
         ) : (
-          <p>이메일 정보가 없어 즐겨찾기를 불러올 수 없습니다.</p>
+          <div className="text-gray-600">내가 등록한 게시물이 없습니다.</div>
         )}
       </div>
     </div>

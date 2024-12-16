@@ -1,91 +1,40 @@
-import type { Metadata } from 'next'
-import localFont from 'next/font/local'
-import './globals.css'
-import Navbar from '@/components/Navbar'
-import { NextAuthProvider } from '@/components/Providers'
-import FloatingSidebar from '@/components/FloatingSidebar'
-import Link from 'next/link'
-import Footer from '@/components/Footer'
-import Image from 'next/image'
+'use client'
 
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900',
-})
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900',
-})
-
-export const metadata: Metadata = {
-  title: 'Old Emporium',
-  description: 'Discover unique treasures from the past',
-  icons: {
-    icon: [
-      { url: '/icon-16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/icon-32.png', sizes: '32x32', type: 'image/png' },
-      { url: '/icon-48.png', sizes: '48x48', type: 'image/png' },
-      { url: '/icon.png', sizes: '192x192', type: 'image/png' }
-    ],
-    // Apple 기기를 위한 설정
-    apple: [
-      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }
-    ],
-    // 파비콘도 추가
-    shortcut: [{ url: '/favicon.ico' }],
-  },
-  
-}
+import { SessionProvider } from 'next-auth/react'
+import Navbar from '../components/Navbar'
+import Sidebar from '../components/FloatingSidebar'
+import Footer from '../components/Footer' // Footer 컴포넌트 임포트
+import './globals.css' // 전역 CSS 임포트
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
+  const isSidebarActive = true // 사이드바 활성화 여부
+
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <NextAuthProvider>
-          <div className="max-w-7xl mx-auto">
-            <header className="bg-[#1A1A1A] text-white">
-              <div className="container mx-auto px-4 py-6">
-                <div className="flex items-center justify-between">
-                  {/* 로고와 브랜드명 */}
-                  <Link href="/" className="flex items-center space-x-4">
-                    <Image
-                      src="/logo.png"
-                      alt="Old Emporium Logo"
-                      width={60}
-                      height={60}
-                      className="object-contain"
-                    />
-                    <div className="flex flex-col">
-                      <span className="brand-title text-[#D4AF37] font-['Dancing_Script'] text-4xl">
-                        Old Emporium
-                      </span>
-                      <span className="text-[#D4AF37] text-sm tracking-wider mt-1">
-                        PREMIUM VINTAGE COLLECTION
-                      </span>
-                    </div>
-                  </Link>
-                  
-                  {/* Navbar만 표시 */}
-                  <Navbar />
-                </div>
-              </div>
-              {/* 골드 구분선 추가 */}
-              <div className="h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
-            </header>
-            
-            <FloatingSidebar />
-            <main className="mt-8">{children}</main>
-            <Footer />
+      <body className="flex min-h-screen flex-col overflow-x-hidden">
+        {/* 세션 컨텍스트 제공 */}
+        <SessionProvider>
+          <div className="flex flex-1">
+            {/* 사이드바 */}
+            <Sidebar />
+            {/* 네비게이션 바 및 페이지 내용 */}
+            <div
+              className={`w-full flex-1 ${
+                isSidebarActive ? 'ml-0' : 'ml-0'
+              } transition-all duration-300`}
+            >
+              <Navbar />
+              {/* 페이지 내용 */}
+              <main>{children}</main>
+            </div>
           </div>
-        </NextAuthProvider>
+          {/* 푸터 추가 */}
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   )

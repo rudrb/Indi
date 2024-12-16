@@ -5,11 +5,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary-gold: #D4AF37;
-  --secondary-brown: #8B4513;
-  --bg-dark: #1A1A1A;
-  --bg-warm: #D2B48C;
-  --text-light: #F5F5F5;
+  --primary-gold: #d4af37;
+  --secondary-brown: #8b4513;
+  --bg-dark: #1a1a1a;
+  --bg-warm: #d2b48c;
+  --text-light: #f5f5f5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,26 +19,65 @@
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: 'Merriweather', serif;
+/* 초기화 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
+/* html, body 스타일 */
+html,
+body {
+  height: 100%; /* 전체 높이를 100%로 설정 */
+  width: 100%; /* 전체 너비를 100%로 설정 */
+  overflow-x: hidden; /* 수평 스크롤 막기 */
+}
+
+/* body 스타일 */
+body {
+  display: block;
+  width: 100%;
+}
+
+/* 네비게이션 바 */
+.sidebar {
+  width: 250px; /* 사이드바 고정 너비 */
+  background-color: #2d3748; /* 배경색 */
+  color: white;
+  padding: 20px;
+  position: fixed; /* 화면 상단에 고정 */
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+/* 본문 콘텐츠 */
+.main-content {
+  margin-left: 0; /* 사이드바 너비만큼 왼쪽 여백 추가 */
+  padding: 20px;
+  background-color: #f5f5f5; /* 본문 배경색 */
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  width: calc(100% - 250px); /* 사이드바 너비를 제외한 너비 설정 */
+  box-sizing: border-box; /* 패딩이 너비에 영향을 미치지 않도록 */
+}
+
+/* h1 스타일 */
 h1 {
   position: relative;
-  padding: 0;
-  margin: 0;
-  font-family: 'Dancing Script', cursive;
+  font-family: 'Pacifico', cursive;
   font-weight: 700;
   font-size: 48px;
   color: var(--primary-gold);
   letter-spacing: -3px;
-  text-align: center;
+  text-align: left; /* 왼쪽 정렬 */
   margin: 120px 0 80px 0;
   transition: all 0.4s ease 0s;
 }
 
+/* h1 내 span 스타일 */
 h1 span {
   display: block;
   font-size: 0.5em;
@@ -51,7 +90,7 @@ h1 em {
 }
 
 .one h1 {
-  text-align: center;
+  text-align: left; /* 왼쪽 정렬 */
   text-transform: uppercase;
   padding-bottom: 5px;
 }
@@ -76,21 +115,21 @@ h1 em {
   position: relative;
   margin-top: 25px;
   left: 50%;
-  margin-left: -50px;
+  margin-left: 0px;
   background-color: var(--primary-gold);
 }
 
+/* separator 스타일 */
 .separator {
   display: block;
-  margin: 30px auto 10px;
-  text-align: center;
+  margin: 0 auto 10px;
+  text-align: left; /* 왼쪽 정렬 */
   height: 40px;
   position: relative;
   background: transparent;
   color: rgba(15, 19, 42, 0.4);
   font-size: 13px;
-  width: 90%;
-  max-width: 680px;
+  width: 100%;
 }
 
 .separator::before,
@@ -112,12 +151,12 @@ h1 em {
   width: 45%;
 }
 
+/* 로그인 버튼 스타일 */
 .google__btn,
 .github__btn {
   display: block;
-  width: 90%;
-  max-width: 680px;
-  margin: 20px auto;
+  width: 60%; /* 너비를 자동으로 설정 */
+  margin: 10px auto; /* 수평 중앙 정렬 */
   height: 50px;
   cursor: pointer;
   font-size: 14px;
@@ -148,9 +187,26 @@ h1 em {
   box-shadow: 0 0 0 rgba(37, 40, 45, 0);
 }
 
+/* 로그인 컨테이너 */
 .logincontainer {
-  display: block;
-  max-width: 680px;
-  width: 80%;
-  margin: 120px auto;
+  display: flex; /* 플렉스박스 사용 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 100%; /* 전체 너비 */
+  margin: 10; /* 상하 간격 제거 */
+  padding: 20px; /* 패딩 추가 */
+}
+
+/* 본문 내용 스타일 */
+main {
+  margin-top: 80px; /* 네비게이션 바 높이만큼 위쪽 여백 추가 */
+  width: 100%;
+  padding: 20px;
+}
+
+/* 배너 스타일 */
+.banner,
+.layout {
+  margin-left: 0; /* 왼쪽 여백 제거 */
+  padding-left: 0; /* 왼쪽 패딩 제거 */
 }

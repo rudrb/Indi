@@ -86,8 +86,6 @@ export default function EditTopicPage() {
       const payload = {
         title: topic.title,
         description: topic.description,
-        price: topic.price,
-        category: topic.category,
         image: imageUrl, // Cloudinary URL
       }
 
@@ -101,11 +99,11 @@ export default function EditTopicPage() {
 
       if (!res.ok) throw new Error('Failed to update topic')
 
-      alert('상품이 성공적으로 수정되었습니다.')
+      alert('게시물이 성공적으로 수정되었습니다.')
       router.push('/')
     } catch (error) {
       console.error('Error updating topic:', error)
-      alert('상품 수정에 실패했습니다.')
+      alert('게시물 수정에 실패했습니다.')
     } finally {
       setLoading(false)
     }
@@ -113,22 +111,22 @@ export default function EditTopicPage() {
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>{error}</p>
-  if (!topic) return <p>수정할 상품을 찾을 수 없습니다.</p>
+  if (!topic) return <p>수정할 게시물을 찾을 수 없습니다.</p>
 
   return (
     <div className="container mx-auto my-8 max-w-4xl px-4">
-      <h2 className="text-2xl font-bold mb-6 text-center">상품 수정</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">게시글 수정</h2>
       <form
         onSubmit={handleUpdate}
         className="border border-gray-300 rounded-lg bg-white shadow-lg p-6"
       >
-        {/* 상품 제목 */}
+        {/* 게시물 제목 */}
         <div className="mb-6">
           <label
             htmlFor="title"
             className="block mb-2 font-bold text-gray-700 text-sm"
           >
-            상품명
+            게시물 이름름
           </label>
           <input
             id="title"
@@ -140,13 +138,13 @@ export default function EditTopicPage() {
           />
         </div>
 
-        {/* 상품 설명 */}
+        {/* 게시물 설명 */}
         <div className="mb-6">
           <label
             htmlFor="description"
             className="block mb-2 font-bold text-gray-700 text-sm"
           >
-            상품 설명
+            게시물 설명
           </label>
           <textarea
             id="description"
@@ -159,57 +157,13 @@ export default function EditTopicPage() {
           ></textarea>
         </div>
 
-        {/* 상품 가격 */}
-        <div className="mb-6">
-          <label
-            htmlFor="price"
-            className="block mb-2 font-bold text-gray-700 text-sm"
-          >
-            상품 가격
-          </label>
-          <input
-            id="price"
-            type="number"
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={topic.price}
-            onChange={(e) =>
-              setTopic({ ...topic, price: Number(e.target.value) })
-            }
-            required
-          />
-        </div>
-
-        {/* 카테고리 선택 */}
-        <div className="mb-6">
-          <label
-            htmlFor="category"
-            className="block mb-2 font-bold text-gray-700 text-sm"
-          >
-            카테고리
-          </label>
-          <select
-            id="category"
-            className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={topic.category}
-            onChange={(e) => setTopic({ ...topic, category: e.target.value })}
-            required
-          >
-            <option value="가전제품">가전제품</option>
-            <option value="문구(완구)">문구(완구)</option>
-            <option value="장난감">장난감</option>
-            <option value="생필품">생필품</option>
-            <option value="가구">가구</option>
-            <option value="기타">기타</option>
-          </select>
-        </div>
-
         {/* 이미지 업로드 */}
         <div className="mb-6">
           <label
             htmlFor="image"
             className="block mb-2 font-bold text-gray-700 text-sm"
           >
-            상품 이미지
+            게시물 이미지
           </label>
           <div className="border-dashed border-2 border-gray-300 rounded-lg p-4 flex flex-col items-center justify-center">
             <input

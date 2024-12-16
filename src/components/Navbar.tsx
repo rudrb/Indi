@@ -1,55 +1,75 @@
 'use client'
 
-import { signOut, useSession } from 'next-auth/react'
-import Image from 'next/image'
+import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
-import React from 'react'
 
-export default function Navbar() {
-  const { status, data: session } = useSession()
+const Navbar = () => {
+  const { data: session, status } = useSession() // 세션 정보 가져오기
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/' })
+  if (status === 'loading') {
+    return <div>Loading.......</div> // 로딩 중에는 "Loading..." 표시
   }
 
   return (
-    <nav className="flex flex-col md:flex-row justify-between items-center bg-[#1A1A1A] px-8 py-4 shadow gap-4">
-      <div className="flex gap-2 items-center">
-        <Image
-          src={session?.user?.image ?? '/default-avatar.png'}
-          width={40}
-          height={40}
-          alt={session?.user?.name ?? 'user'}
-          className="rounded-full"
-        />
-        <span className="text-[#D4AF37] font-bold">{session?.user?.name}</span>
-      </div>
-
-      <div className="flex gap-4 items-center">
-        {status === 'authenticated' ? (
-          <>
-            <button
-              onClick={handleSignOut}
-              className="bg-[#D4AF37] hover:bg-[#B8860B] text-white px-4 py-2 rounded text-sm font-bold transition-all"
-            >
-              Sign Out
+    <nav className="bg-[#1f2937] text-white p-4 w-full fixed top-0 left-0 z-10">
+      <div className="flex items-center justify-between w-full">
+        {/* 좌측 네비게이션 */}
+        <div className="flex space-x-6">
+          <Link href="/">
+            <button className="px-6 py-3 bg-[#1E40AF] rounded-md hover:bg-[#1D4ED8] transition-all duration-300 ease-in-out text-lg font-semibold">
+              홈
             </button>
-            <Link
-              href="/addTopic"
-              className="bg-[#D4AF37] hover:bg-[#B8860B] text-white px-4 py-2 rounded text-sm font-bold transition-all"
-            >
-              상품 등록
-            </Link>
-          </>
-        ) : (
-          <Link
-            href="/login"
-            className="bg-[#D4AF37] hover:bg-[#B8860B] text-white px-4 py-2 rounded text-sm font-bold transition-all"
-          >
-            Login
           </Link>
-        )}
+        </div>
+
+        {/* 중앙에 "게시물 올리기" 버튼 배치 */}
+        <div className="flex justify-center flex-1">
+          {session && (
+            <Link href="/addTopic">
+              <button className="px-10 py-3 bg-[#927823] rounded-md hover:bg-[#b68c2f] transition-all duration-300 ease-in-out text-lg font-semibold">
+                게시물 올리기
+              </button>
+            </Link>
+          )}
+        </div>
+
+        {/* 우측 네비게이션 */}
+        <div className="flex space-x-6">
+          {session ? (
+            // 로그인 상태일 경우
+            <div className="text-sm text-white flex items-center space-x-4">
+              <span>{session.user?.name}</span>
+              <img
+                src={session.user?.image || '/default-avatar.png'}
+                alt="User Image"
+                className="w-8 h-8 rounded-full"
+              />
+              {/* 마이페이지 링크 수정 */}
+              <Link href="/dashboard">
+                <button className="px-6 py-3 bg-[#4CAF50] rounded-md hover:bg-[#45a049] transition-all duration-300 ease-in-out text-lg font-semibold">
+                  마이페이지
+                </button>
+              </Link>
+              {/* 로그아웃 버튼 */}
+              <button
+                onClick={() => signOut()} // 로그아웃 처리
+                className="px-6 py-3 bg-[#EF4444] rounded-md hover:bg-[#dc2626] transition-all duration-300 ease-in-out text-lg font-semibold"
+              >
+                로그아웃
+              </button>
+            </div>
+          ) : (
+            // 로그인 상태가 아니면 로그인 버튼 표시
+            <Link href="/login">
+              <button className="px-6 py-3 bg-[#4CAF50] rounded-md hover:bg-[#45a049] transition-all duration-300 ease-in-out text-lg font-semibold">
+                로그인
+              </button>
+            </Link>
+          )}
+        </div>
       </div>
     </nav>
   )
 }
+
+export default Navbar

@@ -18,25 +18,15 @@ interface Topic {
   category: string
 }
 
-interface Comment {
-  _id: string
-  userEmail: string
-  content: string
-  createdAt: string
-  isSeller: string
-}
-
 export default function TopicDetailPage() {
   const params = useParams()
   const id = Array.isArray(params?.id) ? params?.id[0] : params?.id
   const [topic, setTopic] = useState<Topic | null>(null)
   const [loading, setLoading] = useState(true)
-  const [comments, setComments] = useState<Comment[]>([])
-  const [newComment, setNewComment] = useState('')
-  const [editingCommentId, setEditingCommentId] = useState<string | null>(null)
+
+  // Modal 상태 추가
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalImage, setModalImage] = useState<string | null>(null)
-  const [isFavorite, setIsFavorite] = useState(false)
 
   const { data: session } = useSession()
   const userEmail = session?.user?.email
@@ -50,27 +40,6 @@ export default function TopicDetailPage() {
         if (!res.ok) throw new Error('Failed to fetch topic')
         const data = await res.json()
         setTopic(data)
-
-        const commentRes = await fetch(`/api/comments?topicId=${id}`)
-        if (!commentRes.ok) throw new Error('Failed to fetch comments')
-        const { comments, sellerEmail } = await commentRes.json()
-        setComments(
-          comments.map((comment: Comment) => ({
-            ...comment,
-            isSeller: comment.userEmail === sellerEmail,
-          }))
-        )
-
-        const favoritesRes = await fetch(
-          `/api/favorites?userEmail=${userEmail}`
-        )
-        if (!favoritesRes.ok) throw new Error('Failed to fetch favorites')
-        const favorites = await favoritesRes.json()
-        const isProductFavorited = favorites.some(
-          (favorite: { topicId: { _id: string } }) =>
-            favorite.topicId._id === data._id
-        )
-        setIsFavorite(isProductFavorited)
 
         const visitedProducts = JSON.parse(
           localStorage.getItem('visitedProducts') || '[]'
@@ -108,126 +77,30 @@ export default function TopicDetailPage() {
     setModalImage(null)
   }
 
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setNewComment(e.target.value)
-  }
-
-  const handleCommentSubmit = async () => {
-    if (!newComment.trim()) return
-
-    const newCommentData = {
-      content: newComment,
-      userEmail,
-      topicId: topic?._id,
-    }
-
-    try {
-      let res
-      if (editingCommentId) {
-        res = await fetch(`/api/comments/${editingCommentId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newCommentData),
-        })
-      } else {
-        res = await fetch('/api/comments', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newCommentData),
-        })
-      }
-
-      if (res.ok) {
-        const data = await res.json()
-        setComments((prev) => {
-          if (editingCommentId) {
-            return prev.map((comment) =>
-              comment._id === editingCommentId ? data : comment
-            )
-          }
-          return [data, ...prev]
-        })
-        setNewComment('')
-        setEditingCommentId(null)
-      }
-    } catch (error) {
-      console.error('Error submitting comment:', error)
-    }
-  }
-
-  const handleCommentEdit = (commentId: string) => {
-    const commentToEdit = comments.find((c) => c._id === commentId)
-    if (commentToEdit) {
-      setNewComment(commentToEdit.content)
-      setEditingCommentId(commentId)
-    }
-  }
-
-  const handleCommentDelete = async (commentId: string) => {
-    try {
-      const res = await fetch(`/api/comments/${commentId}`, {
-        method: 'DELETE',
-      })
-
-      if (res.ok) {
-        setComments((prev) => prev.filter((c) => c._id !== commentId))
-      }
-    } catch (error) {
-      console.error('Error deleting comment:', error)
-    }
-  }
-
-  const handleAddToFavorites = async () => {
-    if (!userEmail || !topic) return
-
-    try {
-      const method = isFavorite ? 'DELETE' : 'POST'
-      const res = await fetch('/api/favorites', {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ topicId: topic._id, userEmail }),
-      })
-
-      if (res.ok) {
-        setIsFavorite(!isFavorite)
-        alert(
-          isFavorite
-            ? '찜 목록에서 삭제되었습니다!'
-            : '찜 목록에 추가되었습니다!'
-        )
-      } else {
-        throw new Error('Failed to update favorite')
-      }
-    } catch (error) {
-      console.error('Error updating favorite:', error)
-    }
-  }
-
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
         <Image
-          src="/loading.gif" // 사용할 GIF 파일 경로
+          src="/load.gif" // 사용할 GIF 파일 경로
           alt="Loading animation"
           width={200}
           height={200}
         />
       </div>
     )
-  if (!topic) return <div>상품을 찾을 수 없습니다.</div>
+  if (!topic) return <div>게시물을 찾을 수 없습니다.</div>
 
   const isOwner = userEmail === topic.userEmail
 
   return (
     <div className="container mx-auto max-w-4xl p-6 bg-white shadow-md rounded-lg">
       <div className="relative">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">{topic.title}</h1>
+        {/* 제목 글씨 크기 및 중앙 정렬 */}
+        <h1 className="text-4xl font-bold mb-4 text-black text-center">
+          {topic.title}
+        </h1>
+
+        {/* 이미지 클릭 시 모달 띄우기 */}
         {topic.image && (
           <div className="flex justify-center mb-6">
             <Image
@@ -235,36 +108,18 @@ export default function TopicDetailPage() {
               alt={topic.title}
               width={600}
               height={400}
+              unoptimized
               className="cursor-pointer rounded-lg shadow-lg"
               onClick={() => handleImageClick(topic.image!)}
             />
           </div>
         )}
-        <div className="absolute top-0 right-0">
-          {!isOwner && (
-            <button
-              onClick={handleAddToFavorites}
-              className={`py-2 px-4 text-sm rounded-md ${
-                isFavorite
-                  ? 'bg-red-500 text-white'
-                  : 'bg-gray-200 text-gray-800'
-              }`}
-            >
-              {isFavorite ? '찜 해제' : '찜하기'}
-            </button>
-          )}
-        </div>
+
+        <p className="text-center text-gray-600 mb-6">{topic.description}</p>
       </div>
-      <p className="text-gray-600 mb-4">{topic.description}</p>
-      <p className="text-lg font-semibold text-gray-900">
-        가격: ₩{topic.price}
-      </p>
-      <p className="text-sm text-gray-500 mb-4">
-        카테고리: {topic.category || '없음'}
-      </p>
 
       {isOwner && (
-        <div className="flex justify-end mb-6">
+        <div className="flex justify-center space-x-4 mb-6">
           <Link
             href={`/editTopic/${topic._id}`}
             className="flex items-center py-2 px-4 text-sm font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600"
@@ -276,62 +131,7 @@ export default function TopicDetailPage() {
         </div>
       )}
 
-      <div className="comments-section mt-8">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">댓글</h2>
-        <div className="mb-4">
-          <textarea
-            className="w-full h-20 p-3 border border-gray-300 rounded-md"
-            placeholder="댓글을 작성하세요..."
-            value={newComment}
-            onChange={handleCommentChange}
-          />
-          <button
-            onClick={handleCommentSubmit}
-            className="mt-2 py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600"
-          >
-            {editingCommentId ? '댓글 수정' : '댓글 작성'}
-          </button>
-        </div>
-        <ul className="space-y-4">
-          {comments.map((comment) => (
-            <li
-              key={comment._id}
-              className="p-4 border border-gray-200 rounded-md"
-            >
-              <div className="flex justify-between items-center">
-                <span
-                  className={`font-semibold ${
-                    comment.isSeller ? 'text-blue-600' : 'text-gray-800'
-                  }`}
-                >
-                  {comment.userEmail} {comment.isSeller ? '(판매자)' : ''}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {new Date(comment.createdAt).toLocaleString()}
-                </span>
-              </div>
-              <p className="text-gray-700 mt-2">{comment.content}</p>
-              {comment.userEmail === userEmail && (
-                <div className="flex justify-end mt-2 space-x-2">
-                  <button
-                    onClick={() => handleCommentEdit(comment._id)}
-                    className="text-sm text-blue-500 hover:underline"
-                  >
-                    수정
-                  </button>
-                  <button
-                    onClick={() => handleCommentDelete(comment._id)}
-                    className="text-sm text-red-500 hover:underline"
-                  >
-                    삭제
-                  </button>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-
+      {/* 모달: 이미지 클릭 시 큰 이미지 보여주기 */}
       {isModalOpen && modalImage && (
         <div
           className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50"

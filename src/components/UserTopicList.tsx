@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react' // 로그인 상태 확인
-
 import Link from 'next/link'
 
-import Image from 'next/image'
-
+import Image from 'next/image' // 필요한 경우 이미지 최적화
 interface Topic {
   _id: string
   title: string
@@ -14,9 +12,7 @@ interface Topic {
   createdAt: string
   updatedAt: string
   image?: string // 상품 이미지를 추가할 수 있도록 필드 확장
-  price: number
   userEmail: string // 상품 등록한 사용자의 이메일 추가
-  category: string // 카테고리 필드 추가
 }
 
 export default function TopicLists() {
@@ -54,8 +50,8 @@ export default function TopicLists() {
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
-        <Image
-          src="/loading.gif" // 사용할 GIF 파일 경로
+        <img
+          src="/YGgL.gif" // public 폴더에 있는 GIF 파일
           alt="Loading animation"
           width={200}
           height={200}
@@ -64,7 +60,7 @@ export default function TopicLists() {
     )
   if (error) return <p>Error: {error}</p>
   if (topics.length === 0)
-    return <p className="text-gray-500 mt-4">등록한 상품이 없습니다...</p>
+    return <p className="text-gray-500 mt-4">게시물이 없습니다...</p>
 
   return (
     <div className="container mx-auto my-8">
@@ -77,7 +73,7 @@ export default function TopicLists() {
             {/* 이미지 표시 */}
             <div className="relative h-48 w-full mb-4">
               <Image
-                src={topic.image || '/default-avatar.png'} // 기본 이미지 사용
+                src={topic.image || '/default.jpg'} // 기본 이미지 사용
                 alt={topic.title}
                 layout="fill"
                 objectFit="cover"
@@ -91,11 +87,7 @@ export default function TopicLists() {
             <p className="text-sm text-gray-600 mt-2 truncate">
               {topic.description}
             </p>
-            {/* 카테고리 표시 */}
-            <p className="text-sm text-gray-500 mt-2">{topic.category}</p>
-            <h3 className="text-lg font-bold text-gray-800 truncate mt-4">
-              {topic.price}원
-            </h3>
+
             {/* 상품 상세 페이지 링크 */}
             <Link href={`/detailTopic/${topic._id}`} passHref>
               <button className="text-blue-600 mt-4">자세히 보기</button>
