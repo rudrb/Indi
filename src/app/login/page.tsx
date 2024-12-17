@@ -23,7 +23,7 @@ export default function LoginPage() {
       {/* 하단 링크 */}
       <div className="mt-6 text-center">
         <p className="text-sm text-gray-500">
-          Don't have an account?{' '}
+          Don&#39;t have an account?{' '}
           <a
             href="/signup"
             className="text-blue-500 font-semibold hover:underline"
