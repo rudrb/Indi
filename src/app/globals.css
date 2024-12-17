@@ -62,6 +62,9 @@ body {
   overflow-y: auto; /* 세로 스크롤 가능 */
   width: calc(100% - 250px); /* 사이드바 너비를 제외한 너비 설정 */
   box-sizing: border-box; /* 패딩이 너비에 영향을 미치지 않도록 */
+  min-height: calc(
+    100vh - 100px
+  ); /* 본문 최소 높이를 설정 (푸터를 제외한 공간) */
 }
 
 /* h1 스타일 */
@@ -209,4 +212,81 @@ main {
 .layout {
   margin-left: 0; /* 왼쪽 여백 제거 */
   padding-left: 0; /* 왼쪽 패딩 제거 */
+}
+html {
+  scroll-behavior: smooth;
+}
+/* 토픽 리스트의 컨테이너 스타일 */
+.topic-list {
+  display: grid; /* 그리드 레이아웃 사용 */
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(300px, 1fr)
+  ); /* 자동으로 그리드 항목 크기 조정 */
+  gap: 20px; /* 항목 간 간격을 20px로 설정 */
+  padding: 20px;
+}
+
+.topic-item {
+  background-color: var(--bg-warm);
+  padding: 100px;
+  margin-bottom: 40px; /* 각 게시글 하단에 여백 추가 */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 각 토픽 항목에 마우스를 올렸을 때 */
+.topic-item:hover {
+  transform: translateY(-5px); /* 마우스 오버 시 항목을 위로 띄우기 */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 더 강한 그림자 효과 */
+}
+
+/* 토픽 제목 스타일 */
+.topic-item h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--foreground);
+  margin-bottom: 10px;
+}
+
+/* 토픽 설명 스타일 */
+.topic-item p {
+  color: var(--foreground);
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* 각 항목의 이미지 스타일 */
+.topic-item img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px; /* 이미지 테두리 둥글게 */
+}
+/* 푸터 스타일 */
+footer {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  padding: 20px 0; /* 위/아래 여백만 추가, 좌우는 0으로 설정 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  margin-top: 0px; /* 본문과 푸터 사이에 공백 추가 */
+  width: 100%; /* 전체 너비를 100%로 설정 */
+  box-sizing: border-box; /* padding과 border가 전체 너비에 영향을 미치지 않도록 설정 */
+}
+
+/* 푸터 내 텍스트 스타일 */
+footer p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 5px; /* 푸터 내용 간 공백 추가 */
+}
+
+/* 푸터 내 링크 스타일 */
+footer a {
+  color: var(--primary-gold);
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
 }

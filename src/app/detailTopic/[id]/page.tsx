@@ -7,6 +7,7 @@ import RemoveBtn from '@/components/RemoveBtn'
 import Link from 'next/link'
 import { HiPencilAlt } from 'react-icons/hi'
 import Image from 'next/image'
+import React from 'react'
 
 interface Topic {
   _id: string
@@ -93,7 +94,7 @@ export default function TopicDetailPage() {
   const isOwner = userEmail === topic.userEmail
 
   return (
-    <div className="container mx-auto max-w-4xl p-6 bg-white shadow-md rounded-lg">
+    <div className="container mx-auto max-w-4xl p-6 bg-white shadow-xl rounded-lg border border-gray-300">
       <div className="relative">
         {/* 제목 글씨 크기 및 중앙 정렬 */}
         <h1 className="text-4xl font-bold mb-4 text-black text-center">
@@ -109,20 +110,22 @@ export default function TopicDetailPage() {
               width={600}
               height={400}
               unoptimized
-              className="cursor-pointer rounded-lg shadow-lg"
+              className="cursor-pointer rounded-lg shadow-lg border-2 border-gray-300"
               onClick={() => handleImageClick(topic.image!)}
             />
           </div>
         )}
 
-        <p className="text-center text-gray-600 mb-6">{topic.description}</p>
+        <p className="text-center text-gray-600 mb-6 px-4 py-2 rounded-lg shadow-sm bg-gray-50">
+          {topic.description}
+        </p>
       </div>
 
       {isOwner && (
         <div className="flex justify-center space-x-4 mb-6">
           <Link
             href={`/editTopic/${topic._id}`}
-            className="flex items-center py-2 px-4 text-sm font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            className="flex items-center py-2 px-4 text-sm font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600 shadow-lg"
           >
             <HiPencilAlt className="mr-2" />
             수정하기

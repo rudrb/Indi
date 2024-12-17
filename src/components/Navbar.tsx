@@ -1,13 +1,28 @@
 'use client'
 
 import { useSession, signOut } from 'next-auth/react'
+import Image from 'next/image'
 import Link from 'next/link'
+import React, { useState } from 'react'
 
 const Navbar = () => {
   const { data: session, status } = useSession() // 세션 정보 가져오기
 
+  const [isLoading, setIsLoading] = useState<boolean>(false) // 로딩 상태
+
   if (status === 'loading') {
     return <div>Loading.......</div> // 로딩 중에는 "Loading..." 표시
+  }
+
+  const handleLogout = async () => {
+    setIsLoading(true)
+    try {
+      await signOut() // 로그아웃 시도
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      setIsLoading(false) // 로딩 끝
+    }
   }
 
   return (
@@ -39,10 +54,11 @@ const Navbar = () => {
             // 로그인 상태일 경우
             <div className="text-sm text-white flex items-center space-x-4">
               <span>{session.user?.name}</span>
-              <img
+              <Image
                 src={session.user?.image || '/default-avatar.png'}
                 alt="User Image"
-                className="w-8 h-8 rounded-full"
+                width={50}
+                height={70}
               />
               {/* 마이페이지 링크 수정 */}
               <Link href="/dashboard">
@@ -52,10 +68,11 @@ const Navbar = () => {
               </Link>
               {/* 로그아웃 버튼 */}
               <button
-                onClick={() => signOut()} // 로그아웃 처리
+                onClick={handleLogout} // 로그아웃 처리
                 className="px-6 py-3 bg-[#EF4444] rounded-md hover:bg-[#dc2626] transition-all duration-300 ease-in-out text-lg font-semibold"
+                disabled={isLoading} // 로딩 중에는 버튼 비활성화
               >
-                로그아웃
+                {isLoading ? '로딩 중...' : '로그아웃'}
               </button>
             </div>
           ) : (

@@ -3,7 +3,8 @@ import { FaGithub, FaInstagram } from 'react-icons/fa'
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-blueGray-200 pt-8 pb-6 w-full">
+    <footer className="bg-blueGray-200 pt-8 pb-12 w-full mt-8">
+      {' '}
       <div className="container mx-auto px-4">
         <hr className="my-6 border-blueGray-600" />
         <div className="flex flex-wrap text-left lg:text-left justify-center">

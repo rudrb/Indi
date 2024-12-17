@@ -1,6 +1,4 @@
 const nextConfig = {
-  /* config options here */
-
   images: {
     remotePatterns: [
       {
@@ -17,10 +15,7 @@ const nextConfig = {
       },
     ],
   },
-
-  experimental: {
-    serverComponentsExternalPackages: ['formidable'], // formidable 외부 패키지 사용 허용
-  },
+  // 'experimental' 옵션에서 'serverExternalPackages' 제거
 }
 
 export default nextConfig

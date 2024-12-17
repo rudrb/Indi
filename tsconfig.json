@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "jsx": "preserve",
+    "strict": true,
     "lib": [
       "dom",
       "dom.iterable",
@@ -8,36 +9,36 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "esModuleInterop": true,
+    "incremental": true,
     "module": "esnext",
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
+    "baseUrl": ".", // baseUrl을 프로젝트 루트로 설정
+    "paths": {
+      "@/*": [
+        "src/*"
+      ] // @는 src 디렉토리로 경로를 설정
+    },
     "plugins": [
       {
         "name": "next"
       }
-    ],
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
-    "forceConsistentCasingInFileNames": true
+    ]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
     "next.config.mjs",
-    "src/app/api/favorites/route.js"
+    "src/app/api/favorites/route.js",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next"
   ]
 }

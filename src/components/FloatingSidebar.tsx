@@ -102,21 +102,6 @@ export default function FloatingSidebar() {
               </span>
             </Link>
           </li>
-
-          {/* Top 버튼 */}
-          <li className="group relative flex items-center gap-4">
-            <button
-              onClick={scrollToTop}
-              className="flex items-center gap-4 text-gray-300 hover:text-blue-400 transition-colors w-full"
-            >
-              <div className="min-w-[28px]">
-                <FiArrowUp size={28} />
-              </div>
-              <span className="text-lg font-medium hidden group-hover:inline">
-                Top
-              </span>
-            </button>
-          </li>
         </ul>
       </div>
     </div>
