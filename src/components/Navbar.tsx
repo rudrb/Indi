@@ -42,7 +42,7 @@ const Navbar = () => {
           {/* 새로운 버튼 */}
           <Link href="/port">
             <button className="px-6 py-3 bg-[#FFA500] rounded-md hover:bg-[#FF8C00] transition-all duration-300 ease-in-out text-lg font-semibold">
-              새로운 버튼
+              Portpolio
             </button>
           </Link>
 
