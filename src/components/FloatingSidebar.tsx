@@ -1,22 +1,11 @@
 'use client'
 
-import {
-  FiHome,
-  FiUser,
-  FiArrowUp,
-  FiPlus,
-  FiGithub,
-  FiInstagram,
-} from 'react-icons/fi'
+import { FiHome, FiUser, FiPlus, FiGithub, FiInstagram } from 'react-icons/fi'
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 
 export default function FloatingSidebar() {
   const { status } = useSession() // 세션 정보 가져오기
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   return (
     <div className="fixed left-0 top-1/2 transform -translate-y-1/2 z-50 group ml-0">
