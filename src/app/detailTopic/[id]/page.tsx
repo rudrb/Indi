@@ -14,9 +14,8 @@ interface Topic {
   title: string
   description: string
   image?: string
-  price: number
+
   userEmail: string
-  category: string
 }
 
 export default function TopicDetailPage() {
