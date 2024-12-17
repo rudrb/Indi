@@ -29,7 +29,7 @@ const Footer: React.FC = () => {
                       href="https://github.com/rudrb?tab=repositories"
                       rel="noopener noreferrer"
                     >
-                      <FaGithub className="mr-2 text-black" size={24} />
+                      <FaGithub className="mr-2 text-white" size={24} />
                       GitHub
                     </a>
                   </li>
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <FaInstagram className="mr-2 text-black" size={24} />
+                      <FaInstagram className="mr-2 text-white" size={24} />
                       Instagram
                     </a>
                   </li>

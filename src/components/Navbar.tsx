@@ -26,30 +26,26 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-[#1f2937] text-white p-4 w-full fixed top-0 left-0 z-10">
+    <nav className="bg-[#1f2937] bg-opacity-80 text-white p-4 w-full fixed top-0 left-0 z-10 backdrop-blur-md">
       <div className="flex items-center justify-between w-full">
         {/* 좌측 네비게이션 */}
         <div className="flex space-x-6">
           <Link href="/">
-            <button className="px-6 py-3 bg-[#1E40AF] rounded-md hover:bg-[#1D4ED8] transition-all duration-300 ease-in-out text-lg font-semibold">
-              홈
+            <button className="px-10 py-3 bg-[#1E40AF] rounded-md hover:bg-[#1D4ED8] transition-all duration-300 ease-in-out text-lg font-semibold">
+              HOME
             </button>
           </Link>
         </div>
 
-        {/* 중앙에 "게시물 올리기" 버튼 배치 */}
-        <div className="flex justify-center flex-1">
+        {/* 우측 네비게이션 */}
+        <div className="flex items-center space-x-6">
           {session && (
             <Link href="/addTopic">
-              <button className="px-10 py-3 bg-[#927823] rounded-md hover:bg-[#b68c2f] transition-all duration-300 ease-in-out text-lg font-semibold">
+              <button className="px-5 py-3 bg-[#927823] rounded-md hover:bg-[#b68c2f] transition-all duration-300 ease-in-out text-lg font-semibold">
                 게시물 올리기
               </button>
             </Link>
           )}
-        </div>
-
-        {/* 우측 네비게이션 */}
-        <div className="flex space-x-6">
           {session ? (
             // 로그인 상태일 경우
             <div className="text-sm text-white flex items-center space-x-4">
@@ -60,7 +56,7 @@ const Navbar = () => {
                 width={50}
                 height={70}
               />
-              {/* 마이페이지 링크 수정 */}
+              {/* 마이페이지 링크 */}
               <Link href="/dashboard">
                 <button className="px-6 py-3 bg-[#4CAF50] rounded-md hover:bg-[#45a049] transition-all duration-300 ease-in-out text-lg font-semibold">
                   마이페이지
@@ -68,9 +64,9 @@ const Navbar = () => {
               </Link>
               {/* 로그아웃 버튼 */}
               <button
-                onClick={handleLogout} // 로그아웃 처리
+                onClick={handleLogout}
                 className="px-6 py-3 bg-[#EF4444] rounded-md hover:bg-[#dc2626] transition-all duration-300 ease-in-out text-lg font-semibold"
-                disabled={isLoading} // 로딩 중에는 버튼 비활성화
+                disabled={isLoading}
               >
                 {isLoading ? '로딩 중...' : '로그아웃'}
               </button>

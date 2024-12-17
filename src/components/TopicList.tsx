@@ -115,7 +115,7 @@ export default function TopicLists() {
   if (error) return <p>Error: {error}</p>
 
   return (
-    <div className="container mx-auto my-8 px-4 relative">
+    <div className="container mx-auto my-8 px-4 relative max-w-7xl">
       <div className="absolute top-4 left-4 text-3xl text-gray-600"></div>
       {paginatedTopics.length === 0 ? (
         <p className="text-gray-500 mt-4">게시물이 없습니다...</p>
