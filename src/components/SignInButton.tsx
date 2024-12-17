@@ -29,8 +29,6 @@ export default function SignInButton() {
 
   return (
     <div className="container">
-      <h1 className="text-center text-4xl text-pink-500 mb-10">SIGN IN</h1>
-
       <div className="separator mb-8"></div>
 
       {/* Google Sign-In Button */}
