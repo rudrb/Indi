@@ -50,7 +50,7 @@ export default function TopicLists() {
   if (loading)
     return (
       <div className="flex justify-center items-center h-64">
-        <img
+        <Image
           src="/YGgL.gif" // public 폴더에 있는 GIF 파일
           alt="Loading animation"
           width={200}
