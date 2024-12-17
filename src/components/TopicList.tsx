@@ -168,9 +168,7 @@ export default function TopicLists() {
                         <p className="text-xs text-gray-600 mt-1 truncate">
                           {convertToLinks(topic.description)}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          카테고리: {topic.category}
-                        </p>
+
                         <p className="text-xs text-gray-500">
                           만든 시간:{' '}
                           {new Date(topic.createdAt).toLocaleDateString()}

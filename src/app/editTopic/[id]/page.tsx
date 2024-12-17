@@ -126,7 +126,7 @@ export default function EditTopicPage() {
             htmlFor="title"
             className="block mb-2 font-bold text-gray-700 text-sm"
           >
-            게시물 이름름
+            게시물 이름
           </label>
           <input
             id="title"
