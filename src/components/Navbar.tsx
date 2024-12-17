@@ -39,6 +39,13 @@ const Navbar = () => {
 
         {/* 우측 네비게이션 */}
         <div className="flex items-center space-x-6">
+          {/* 새로운 버튼 */}
+          <Link href="/port">
+            <button className="px-6 py-3 bg-[#FFA500] rounded-md hover:bg-[#FF8C00] transition-all duration-300 ease-in-out text-lg font-semibold">
+              새로운 버튼
+            </button>
+          </Link>
+
           {session && (
             <Link href="/addTopic">
               <button className="px-5 py-3 bg-[#927823] rounded-md hover:bg-[#b68c2f] transition-all duration-300 ease-in-out text-lg font-semibold">
